@@ -1,0 +1,368 @@
+.Header1 {
+    /* height: 80px; */
+    /* border-bottom: 1px solid black; */
+   /*  box-shadow: 0px 0px 2px 10px rgba(0,0,0,0.04); */
+   /* position: sticky;
+   top: 0;
+   background-color: white;
+   z-index: 1; */
+}
+
+.offernav1
+{
+ 
+ /* padding: 0px calc(14% + 11px); */
+ 
+ width: 100%;
+ /* border-bottom: 1px solid rgb(226, 226, 231); */
+ text-align: center ;
+ cursor: pointer;
+ position: fixed;
+ background-color: white;
+ z-index: 1;
+}
+.offnavbarblock
+{
+    display:none;
+}.Header1_inside {
+    display: flex;
+    width: 94%;
+    margin-left: auto;
+    margin-right: auto;
+    /* justify-content: space-between; */
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+}
+
+.Header1_inside_left {
+
+    width: 57%;
+    text-align: start;
+    display: flex;
+    /* align-items: center ; */
+
+
+
+}
+
+.Header1_inside_left img {
+    width: 51px;
+    /* align-self: center; */
+    cursor: pointer;
+}
+
+.Header1_inside_left img:hover {
+    transform: scale(1.1);
+    transition: 1s;
+
+}
+
+.Header1_inside_right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+
+}
+
+
+
+.Header1_inside_right_divs {
+    display: flex;
+    align-items: center !important;
+    /* width: ; */
+    width: 80px;
+   /*  justify-content: space-between; */
+    color: #5f6061;
+    /* font-size: 15.5px; */
+    font-weight: 500;
+    /* margin-right: 7px; */
+   
+}
+
+.Header1_inside_right_divs :hover {
+    color: #FC8019;
+    cursor: pointer;
+
+}
+.Header1_inside_right_divs a{
+    text-decoration: none;
+    color: #5f6061;
+}
+.svghover :hover{
+color:#FC8019
+}
+#svgho:hover{
+    color: #FC8019;
+    cursor: pointer;
+}
+.svh:hover{
+    color: #FC8019;
+}
+.Header1_inside_right_divs span:nth-child(1){
+   padding-top: 5px;
+}
+.Header1_inside_right_divs span svg:hover{
+    color: #FC8019;
+}
+.Header1_inside_right_divs_small {
+    width: 70px;
+
+}
+
+/* .Header1_inside_right div:nth-last-child(2){ */
+    /* color: red; */
+    /* margin-right: 25px; */
+
+
+/* } */
+
+
+
+/* .Header1_inside_left span {
+    background-color: red;
+    align-items: center;
+    align-self: center;
+    margin-left: 25px;
+    cursor: pointer;
+    font-size: medium;
+    font-weight: 700;
+    color: #454646;
+}*/
+
+.Header1_inside_left span:hover {
+    color: #FC8019;
+
+} 
+.Header1_inside_right_divs img{
+    color: #FC8019;
+}
+
+.Header1_inside_right_divs_offernew {
+    position: absolute;
+    left: 80px;
+    color: #FC8019;
+    bottom:19.5px;
+    font-size: 10px;
+    font-weight: 600;
+
+}.Header1_popup{
+  
+    position: absolute;
+    background-color: white;
+    width:300px;
+    right:0;
+}
+.popcart{
+    padding: 40px;
+    border: 1px  solid #FC8019;
+}
+
+/* .Header1_inside_left_dasboard {
+    margin-left: 25px;
+    width: fit-content !important;
+    cursor: pointer;
+    background-color: blue;
+    border: none;
+    color: white !important;
+    border-radius: 5px;
+    height: 35px;
+    align-self: center;
+}
+ */
+/* .Header1_inside_left_dasboard_link {
+   
+    
+
+    color: white;
+    font-weight: 700;
+} */
+
+/* .Header1_inside_left_dasboard:hover {
+
+background-color: rgb(217, 41, 223);
+} */
+
+/* .Header1_clear_location {
+    position: relative;
+    cursor: pointer;
+    background-color: red;
+} */
+
+/* .Header1_clear_location_indicator {
+    position: absolute;
+    background-color: black;
+    color: white;
+    width: 175px;
+    padding: 5px;
+    align-self: center; 
+    left: 0px;
+    bottom: 22px;
+    display: none;
+    border-radius: 10px;
+}
+
+.Header1_showingName {
+    position: absolute;
+    top: 0px;
+    
+    margin-left: auto;
+    background-color: black;
+    border: 2px solid salmon;
+    color: white;
+ } */
+
+
+/* .Header1_clear_location:hover .Header1_clear_location_indicator {
+    display: block;
+
+ } */
+
+ /* @media (max-width:1000px){
+    .Header1_inside_left {
+
+        width: 30%;
+    
+      
+    
+    
+    }
+    .Header1_inside_right {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 65%;
+    
+    }
+ } */
+
+ @media (max-width:700px){
+
+
+    .Header1_inside {
+        display: flex;
+    flex-direction: column;}
+
+    .Header1_inside_left {
+
+        width: 100%;
+          justify-content: center;    
+      
+    
+    
+    }
+    .Header1_inside_right {
+      
+        width: 100%;
+    
+    } 
+
+     .Header1_showingName{
+        left: 10px;
+        top: 15px ;
+        padding: 7px;
+
+    }
+ }
+
+ .Header1_inside_right_divs_cart {
+    position: relative;
+} 
+/*
+.Header_inside_show_number {
+    background-color: palevioletred;
+   
+    color: white;
+    border-radius: 50%;
+    width: 25px;
+    
+   position: absolute;
+   top: -10px;
+   
+
+   animation: cartnumanimation 3s infinite;
+} */
+
+
+/* 
+@keyframes cartnumanimation{
+    0%{
+        top: -25px;
+    }
+    5% {
+        top: 10px;
+    }
+    10% {
+        top:15px;
+    }
+    15%{
+        top: 20px;
+    }
+    20%{
+        top: 25px;
+    }
+    25%{
+        top: 30px;
+    }
+
+    30%{
+        top: -20px;
+    }
+    45%{
+        top: -10px;
+    }
+    50%{
+        top: -20px;
+    }
+    60%{
+        top: -10px;
+
+    }
+    100%{
+        top: -10px;
+    }
+}
+ */
+
+/* .Header_inside_right_for_Responsive{
+    display: none;
+    position: relative;
+} */
+
+/* @media (max-width:900px){
+    .Header1_inside_right {
+        display: none;
+    }
+    .Header_inside_right_for_Responsive {
+        display: block;
+    }
+    .Header1_inside {
+        display: flex;
+        justify-content: space-between;
+       align-items: center;
+    }
+} */
+
+/* .Header_inside_right_for_Responsive_moreoptions {
+    position: absolute;
+    top: 15px;
+    right: 17px;
+    background-color: white;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  
+    height: 250px;
+   
+   border-radius: 5px;
+   box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.2);
+  
+
+}
+
+.Header_inside_moreOptions_icon {
+    cursor: pointer;
+} */

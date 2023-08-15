@@ -1,0 +1,181 @@
+/* .HeaderBtween_1 {
+
+} */
+.HeaderBtween{
+    padding-top: 100px;
+}
+.HeaderBtween {
+    
+    background-color: #171a29;
+    /* margin-top: 25px; */
+    position: relative;
+    overflow-x: hidden;
+    
+    
+    }
+    
+    .HeaderBtween_inside {
+        width: 93.5%;
+        display: flex;
+        justify-content: space-between !important;
+        margin-left: auto;
+        margin-right: auto;
+        /* justify-content: center; */
+        padding-top: 45px;
+        padding-bottom: 45px;
+        /* transform: translateX(-360px); */
+        /* z-index: 1; */
+        transition: 1s;
+    
+    }
+    
+    .HeaderBtween_inside img{
+        /* width: 260px;
+       
+        height: 260px; */
+        width: 260px;
+        cursor: pointer;
+        margin-right: 50px ;
+    }
+    
+    .HeaderBtween_inside img:hover{
+    transform: scale(1.1);
+    transition: 1s;
+    
+    }
+    
+    /* .HeaderBtween_inside {
+    
+    } */
+    
+    .HeaderBtween_inside_gorightbtn {
+        position: absolute;
+        left:  94%;
+            top: 250px;
+    
+    
+    
+    }
+    
+    .HeaderBtween_inside_gorightbtn button {
+      
+        width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 0px 5px 3px rgba(0, 0,0,0.5);
+    position: relative;
+    
+    
+    
+    }
+    
+    .HeaderBtween_inside_goleftbtn {
+        position: absolute;
+        left:  1%;
+            top: 250px;
+    
+    
+    
+    }
+    
+    .HeaderBtween_inside_goleftbtn button {
+      
+        width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 0px 5px 3px rgba(0, 0,0,0.5);
+    position: relative;
+    
+    
+    
+    }
+    
+    .HeaderBtween_inside_1 {
+        transform: translateX(-315px);
+        transition: 1s;
+    
+    }
+    
+    .HeaderBtween_inside_2 {
+        transform: translateX(-625px);
+        transition: 1s;
+    
+    
+    }
+    
+    .HeaderBtween_inside_3 {
+        transform: translateX(-925px);
+        transition: 1s;
+    }
+    
+    .HeaderBtween_inside_4 {
+        transform: translateX(-1235px);
+    
+    }
+    
+    .HeaderBtween_inside_5 {
+        transform: translateX(-1525px);
+    
+    }
+    
+    
+    
+    
+    .HeaderBtween_inside_gorightbtn_icon {
+        position: absolute;
+        top: 25%;
+        left: 25%;
+    
+    }
+    .HeaderBtween_inside_goleftbtn_icon {
+        position: absolute;
+        top: 25%;
+        left: 25%;
+    }
+    
+    
+    .HeaderBtween_inside_gorightbtn button:hover .HeaderBtween_inside_gorightbtn_icon{
+        left: 45%;
+        transition: 1s;
+    
+    }
+    
+    .HeaderBtween_inside_goleftbtn button:hover .HeaderBtween_inside_goleftbtn_icon{
+        left: 10%;
+        transition: 1s;
+    
+    }
+    
+    @media (max-width:850px){
+        .HeaderBtween_inside_gorightbtn {
+            left:  92%;}
+    }
+    
+    @media (max-width:650px){
+        .HeaderBtween_inside_gorightbtn {
+            left:  90%;}
+    }
+    
+    @media (max-width:500px){
+        .HeaderBtween_inside_gorightbtn {
+            left:  87%;}
+    }
+    
+    @media (max-width:400px){
+        .HeaderBtween_inside_gorightbtn {
+            left:  84%;}
+    }
+    
+    @media (max-width:300px){
+        .HeaderBtween_inside_gorightbtn {
+            left:  78%;}
+    }
+    
+    @media (max-width:250px){
+        .HeaderBtween_inside_gorightbtn {
+            left:  75%;}
+    }

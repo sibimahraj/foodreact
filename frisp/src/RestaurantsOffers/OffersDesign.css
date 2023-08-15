@@ -1,0 +1,241 @@
+.offer-container {
+  width: 1200px;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.offer-row
+{
+  display: flex;
+  flex-wrap: wrap;
+} 
+
+.offer-column
+{
+  width: 25%;
+  padding:20px;
+  position: relative;
+
+}
+
+
+.offer-img img
+{
+width: 100%;
+border-radius: 20px;
+height: 167px;
+object-fit: cover;
+}
+
+.offer-heading{
+position: absolute;
+  background:linear-gradient(rgba(27, 30, 36, 0) 0%, rgb(27, 30, 36) 84.21%);
+  bottom: 129px;
+  left: 20px;
+  z-index: 0;
+  width: 88%;
+  border-radius: 0px 0px 16px 16px;
+  height: calc(94px);
+}
+
+.offer-img h4{
+position: absolute;
+bottom: 8px;
+left: 10px;
+margin: 8px 15px;
+font-family: "Basis Grotesque Pro";
+color: white;
+font-weight: 800;
+font-size: 22px;
+letter-spacing: -0.5px;
+}
+
+.offer-content h3{
+font-family: "Basis Grotesque Pro";
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.3px;
+  color: rgba(2, 6, 12, 0.75);
+  margin: 8px 0px 0px 0px;
+}
+
+.star-icon{
+display: flex;
+}
+
+.star-icon span
+{
+
+border-radius: 22px;
+padding: 2px;
+background-color: green;
+color: white;
+font-size: 12px;
+
+}
+
+.star-icon  h5{
+
+margin: 0px 10px;
+font-family: "Basis Grotesque Pro";
+font-size: 16px;
+font-weight: 400;
+line-height: 19px;
+letter-spacing: -0.3px;
+
+}
+
+.offer-desc h4{
+  font-family: "Basis Grotesque Pro";
+  font-size: 17px;
+  font-weight: 200;
+  line-height: 19px;
+  letter-spacing: -0.3px;
+  color: rgba(2, 6, 12, 0.6);
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 7px 0px;
+
+}
+
+.offer-desc h3{
+ font-family: "Basis Grotesque Pro";
+  font-size: 17px;
+  font-weight: 200;
+  line-height: 19px;
+  letter-spacing: -0.3px;
+  color: rgba(2, 6, 12, 0.6);
+  overflow-wrap: break-word;
+  margin:0px;
+}
+
+.showDiv
+{
+  margin: 0px auto;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 56px;
+  max-width: 36%;
+}
+
+.showbtn{
+  padding: 17px 130px;
+  background-color: white;
+  font-family: "Basis Grotesque Pro";
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 19px;
+  letter-spacing: -0.3px;
+  color: rgba(2, 6, 12, 0.75);
+  border: 1.5px solid rgba(2, 6, 12, 0.1);
+  border-radius: 12px;
+}
+
+.showbtn:hover{
+cursor: pointer;
+}
+
+.showbtn span{
+font-size: 12px;
+}
+
+.c-container
+{
+width: 1200px;
+margin: 0px auto;
+}
+
+.c-container h3{
+font-size: 25px;
+}
+
+.c-row
+{
+display: flex;
+flex-wrap: wrap;
+
+}
+
+
+.c-column
+{
+width: 25%;
+}
+
+.c-column button{
+height: 43px;
+margin: 10px;
+width: 85%;
+padding: 27px 29px;
+background-color: white;
+font-family: "Basis Grotesque Pro";
+font-size: 16px;
+font-weight: 700;
+line-height: 5px;
+letter-spacing: -0.3px;
+color: rgba(2, 6, 12, 0.75);
+border: 1.5px solid rgba(2, 6, 12, 0.1);
+border-radius: 12px;
+}
+
+
+
+
+/* media query */
+@media screen and (max-width: 992px) {
+  .offer-column {
+    width: 50%;
+  }
+      .c-column
+ {
+ width: 25%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .offer-row {
+    flex-direction: column;
+  }
+  
+}
+
+
+* {
+box-sizing: border-box;
+}
+/* ------- */
+.offer-column:hover{
+transform: scale(1.1);
+cursor:pointer;
+}
+
+
+/* .serchbrletter:focus{
+border: none;
+width: 145%;
+background-color: rgb(240, 240, 245);
+} */
+input:focus{
+outline: none;
+}
+/* ------------------- */
+.nofound
+{
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.nofound img{
+  /* width: 395px; */
+  width: 540px;
+  height: 220px;
+  border-radius: 170px;
+  object-fit: cover;
+}
+.headitem1 img:hover{
+transform: scale(1.1);
+transition: 1s;
+}

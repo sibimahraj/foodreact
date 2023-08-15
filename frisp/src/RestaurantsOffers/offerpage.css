@@ -1,0 +1,679 @@
+
+*{
+    box-sizing: border-box;
+}
+
+.rightscroll
+{
+width: 320px;
+height: 260px;
+overflow-y: scroll;
+
+}
+.secondnavbar
+{
+    display:flex;
+    
+}
+.secondnavbarfix{
+
+    display:flex;
+    position:fixed;
+    top:0;
+    left: 0;
+    align-items: center;
+    height: 70px;
+    border-bottom: 1px solid rgb(226, 226, 231);
+    text-align: center;
+    cursor: pointer;
+    background-color: white;
+    z-index: 1;
+    width: 100%;
+    padding: 0px calc(14% + 11px);
+}
+
+
+.offernav
+{
+ display:flex;
+ align-items: center;
+ padding: 0px calc(14% + 11px);
+ height: 70px;
+ border-bottom: 1px solid rgb(226, 226, 231);
+ text-align: center;
+ cursor: pointer;
+ position: fixed;
+ background-color: white;
+ z-index: 1;
+}
+.offnavbarblock
+{
+    display:none;
+}
+
+.headitem1
+{
+    display: flex;
+}
+
+.swiggyletter
+{
+    font-weight: 700;
+    font-size: 25px;
+    margin: 0px 15px;
+    margin-top: 5px;
+}
+
+.headitem2
+{
+    display: flex;
+    border-left: 1px solid rgb(226, 226, 231);
+    padding: 0px 10px;
+    
+}
+
+
+.smallletter
+{
+    font-weight: 750;
+    font-size: 17px;
+    margin: 0px 10px;
+    margin-top: 5px;
+    white-space: nowrap;
+}
+
+.searchbtnoffer
+{
+    display: flex;
+    border-radius: 12px;
+    background-color: rgb(240, 240, 245);
+    border: none;
+    padding: 10px;
+    width: 400px;
+    margin:0px 10px;
+    
+        
+}
+
+.searchicon
+{
+    position:relative;
+    left: 140px;
+    
+}
+
+.profilehead
+{
+    margin-left: 10px;
+}
+
+.serchbrletter
+{
+    color: rgba(2, 6, 12, 0.6);
+    margin-top: 3px;
+}
+
+@media (max-width:1290px) {
+
+    .searchbtn
+    {
+       width: 300px;
+    }
+    .searchicon
+{
+    position:relative;
+    left: 50px;
+    
+}
+.smallletter
+{
+    font-size: 13px;
+    margin: 0px 10px;
+    margin-top: 5px;
+}
+
+.swiggyletter
+{
+    font-weight: 550;
+    font-size: 25px;
+    margin: 0px 15px;
+    margin-top: 5px;
+}    
+}
+
+@media (max-width:1180px) 
+{
+
+    .searchbtn
+    {
+       width: 260px;
+    }
+    .searchicon
+{
+    position:relative;
+    left: 15px;
+    margin-top: 3px;
+    
+}
+.smallletter
+{
+    font-size: 12px;
+    margin: 0px 10px;
+    margin-top: 5px;
+}
+.swiggyletter
+{
+    font-weight: 550;
+    font-size: 22px;
+    margin: 0px 15px;
+    margin-top: 8px;
+}    
+}
+
+
+@media (max-width:1040px)
+{
+
+.offernav
+{
+display:flex;
+align-items: center;
+height: 70px;
+border-bottom: 1px solid rgb(226, 226, 231);
+text-align: center;
+cursor: pointer;
+position: relative;
+}
+.headitem1
+{
+    position: absolute;
+    left: 0;
+    margin-left: 15px;
+}
+.headitem2
+{
+    position: absolute;
+    top: 80px;
+    left: 0;
+    border: none;
+}
+.searchbtn
+{
+    position: absolute;
+    top: 130px;
+    display: flex;
+    border-radius: 12px;
+    background-color: rgb(240, 240, 245);
+    border: none;
+    padding: 10px;
+    width: 1010px;
+    left: 0;   
+    cursor: pointer;
+        
+}
+.searchicon
+{
+    position:relative;
+    left: 740px;
+    cursor: pointer;
+}
+.profilehead
+{
+    position:absolute;
+    right: 0;
+    margin-right: 20px;
+}
+
+.smallletter
+{
+    font-weight: 550;
+    font-size: 15px;
+    margin: 0px 10px;
+    margin-top: 5px;
+}
+
+}
+
+@media (max-width:820px)
+{
+    .searchbtn
+{
+    position: absolute;
+    top: 130px;
+    display: flex;
+    border-radius: 12px;
+    background-color: rgb(240, 240, 245);
+    border: none;
+    padding: 10px;
+    width: 780px;
+    left: 0;   
+    cursor: pointer;
+        
+}
+.searchicon
+{
+    position:relative;
+    left: 530px;
+    cursor: pointer;
+    
+}
+
+}
+
+@media (max-width:600px)
+{
+  
+.searchbtn
+{
+    position: absolute;
+    top: 130px;
+    display: flex;
+    border-radius: 12px;
+    background-color: rgb(240, 240, 245);
+    border: none;
+    padding: 10px;
+    width: 580px;
+    left: 0;
+    cursor: pointer;  
+   
+        
+}
+.searchicon
+{
+    position:relative;
+    left: 310px;
+    cursor: pointer;
+}
+.profilehead
+{
+    position:relative;
+    left: 450px;
+}
+
+}
+
+@media (max-width:520px)
+{
+  
+.searchbtn
+{
+    position: absolute;
+    top: 130px;
+    display: flex;
+    border-radius: 12px;
+    background-color: rgb(240, 240, 245);
+    border: none;
+    padding: 10px;
+    width: 480px;
+    left: 0;
+    cursor: pointer;  
+   
+        
+}
+.searchicon
+{
+    position:relative;
+    left: 230px;
+    cursor: pointer;
+}
+.profilehead
+{
+    position:relative;
+    left: 360px;
+    
+}
+
+}
+
+/**********************offer navigation******************************/
+
+.offerpage
+{
+    padding-left:200px;
+    padding-right:200px;
+    
+    
+}
+
+.offerline
+{
+    font-weight: 700;
+    font-size: 23px;
+    margin-top: 20px;
+    
+}
+
+.filterbtn
+{
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+    font-size:12px;
+    border-radius: 18px;
+    font-size: 15px;
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(226, 226, 231);
+    box-shadow: rgba(2, 6, 12, 0.04) 0px 2px 12px;
+    width: auto;
+}
+
+.sortbybtn
+{
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+    font-size:12px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(226, 226, 231);
+    border-radius: 18px;
+    margin-left: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: rgba(2, 6, 12, 0.04) 0px 2px 12px;
+    width: auto;
+}
+
+.filtersbtns
+{
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+    font-size:12px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(226, 226, 231);
+    border-radius: 18px;
+    margin-left: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: rgba(2, 6, 12, 0.04) 0px 2px 12px;
+    width: auto;
+}
+
+.ONbtn
+{
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+    font-size:12px;
+    background-color:black;
+    color: white;
+    border: 1px solid rgb(226, 226, 231);
+    border-radius: 18px;
+    margin-left: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: rgba(2, 6, 12, 0.04) 0px 2px 12px;
+    width: auto;
+}
+.Hidebun
+{
+    display: none;
+}
+
+.hoverpage
+{
+    position: fixed;
+    z-index:1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.4);
+}
+.hover1
+{
+    
+    background-color: white;
+    width: 500px;
+    height: 250px;
+    overflow-y: scroll;
+    position: relative;
+    margin: auto;
+    top:120px;
+
+}
+
+.hoverheader
+{
+   position: fixed;
+   height: 62px;
+   background-color: white;
+   width: 500px;
+   position: relative;
+   align-items: center;
+   border-top-left-radius: 13px;
+   margin: auto;
+   top:120px;   
+   
+}
+
+.hoverclose
+{   position: absolute;
+    left: 440px;
+    font-weight: 600;
+    background-color: orange;
+    border:none;
+    padding: 4px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+}
+.filterletter
+{
+    font-size: 20px;
+    font-weight: 900;
+    height: 30%;
+    padding-top: 10px;
+    padding-bottom: 50px;
+    padding-left: 20px;
+    text-align: left;
+    border-bottom: 1px solid rgb(226, 226, 231);
+}
+
+.hoverlist
+{
+
+font-size: 18px;
+font-weight: 700;
+line-height: 20px;
+letter-spacing: -0.3px;
+color: rgba(2, 6, 12, 0.75);
+cursor: pointer;
+
+
+}
+.hoverbody
+{
+display: flex;
+position:absolute;
+
+}
+
+.hoverlistpage
+{
+    border-right: 1px solid rgb(226, 226, 231);
+    text-align: center;
+    width: 160px;   
+    
+}
+
+.hoverlist:active
+{
+    color: orange;
+}
+
+
+.sorthoverpage
+{
+   padding: 30px;
+   white-space: nowrap;
+   height: auto;
+}
+
+.hoverfooder
+{
+
+    height: 62px;
+    background-color: white;
+    width: 500px;
+    position: relative;
+    box-shadow: rgba(40, 44, 63, 0.1) 0px -2.63677px;
+    border-bottom-left-radius: 13px;
+    margin: auto;
+    top:120px;
+    text-align:right;
+    padding: 10px;
+}
+.clearfilterbtn
+{
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    color:orange;
+    font-weight: 600;
+    font-size: 18px;
+    height: 30px;
+
+}
+.filterapllybtn
+{
+    background-color: orange;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 18px;
+    width:120px;
+    height: 30px;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+/**********sort by btn***********/
+
+.dropdown-content {
+    position:absolute;
+    z-index: 1;
+    padding: 0.2em 0.5em;
+    background-color: white;
+    box-shadow: 0 0.5em 1em rgba(0,0,0,0.4);
+    border-radius: 12px;
+    top: 200px;
+    width:180px;
+}
+.dropdownbody
+{
+    display: grid;
+    
+}
+.dropdownletters
+{
+    font-size: 16px;
+    white-space: nowrap;
+    font-size: 12px;
+    width: 75%;
+}
+.inputround
+{
+    width: 25%;
+    text-align: center;
+}
+
+.dropapplybtn
+{
+    text-align: center;
+    padding: 15px 0px;
+    cursor: pointer;
+    color: orange;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+@media (max-width:1290px) 
+{
+    .offerpage
+{
+    padding-left:150px;
+    padding-right:150px;
+    margin-top: 100px;
+}
+
+.dropdown-content {
+    position:absolute;
+    padding: 0.2em 0.5em;
+    background-color: white;
+    box-shadow: 0 0.5em 1em rgba(0,0,0,0.4);
+    border-radius: 12px;
+    top: 300px;
+    left: 220px;
+    width:180px;
+}
+
+    
+}
+
+
+@media (max-width:1180px) {
+
+    .offerpage
+    {
+        padding-left:20px;
+        padding-right:20px;
+        margin-top: 100px;
+
+    }
+
+    
+}
+
+
+
+@media (max-width:520px)
+{
+  
+ .rate2btn{
+    display: none;
+ }
+
+ .rate1btn
+ {
+    display: none;
+ }
+ .pureveg
+ {
+    display: none;
+ }
+ .ratingbtn
+ {
+    display: none;
+ }
+ .offerline
+ {
+    font-size: 20px;
+ }
+
+ .hover1
+{
+    width: 350px;
+    height: 300px;
+}
+.hoverheader
+{ 
+   height: 62px;
+   width: 350px;
+   
+}
+.hoverclose
+{   
+    left: 300px;
+}
+.hoverfooder
+{
+
+    height: 52px;
+    width: 350px; 
+}
+}

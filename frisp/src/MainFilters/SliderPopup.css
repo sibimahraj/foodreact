@@ -1,0 +1,274 @@
+.slider-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .popup-content {
+    position: fixed;
+    top: 0;
+    height: 100%;
+    overflow-y: scroll;
+    background: #fff;
+    transition: transform .3s ease-out;
+    z-index: 10001;
+    transform: translateZ(0);
+    left: auto;
+    right: 0px;
+    transform: translate(0%, 0px);
+    width: 35%;
+  }
+  .divCuision{
+    margin-left: 40px;
+    width: 80%;
+  }
+  .CuisinesHeader {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 35px;
+}
+  
+
+.filter {
+    margin-left: 52px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #282c3f;
+    line-height: 1.2rem;
+}
+.divfilter {
+    padding: 32px 0 20px;
+    margin-bottom: 30px;
+    margin-left: 34px;
+    position: sticky;
+    background: #fff;
+    z-index: 1;
+    top: 0;
+}
+.close {
+    position: absolute;
+    top: 32px;
+    width: 32px;
+    height: 32px;
+    /* opacity: 0.3; */
+  }
+  /* .close:hover {
+    opacity: 1;
+  } */
+  .close:before, .close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 21px;
+    width: 2px;
+    background-color: #333;
+  }
+  .close:before {
+    transform: rotate(45deg);
+  }
+  .close:after {
+    transform: rotate(-45deg);
+  }
+  .listofCus{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 11px;
+  }
+  .divcheckbox{
+    margin-left: 10%;
+    margin-top: -8%;
+  }
+
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+  }
+  .checkboxcus{
+    width: 17px;
+    height: 20px;
+  }
+  .lblcus
+  {
+    margin-left: 12px
+  }
+  .divCuisionFooter{
+    width: 100%;
+    position: sticky;
+    background: #fff;
+    z-index: 1;
+    bottom: 0;
+    box-shadow: 0 -2px 4px 0 #e9e9eb;
+  }
+  .divfotbtn
+  {
+    display: flex;
+    padding: 20px 0;
+  }
+  .btnClear
+  {
+    margin-left: 10%;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 2rem;
+    color: #535665;
+    letter-spacing: 0;
+    border: 1px solid #535665;
+    flex: 0 1;
+    opacity: .5;
+  }
+  .btnshow
+  {
+    width: 50%;
+    cursor: pointer;
+    border: none;
+    line-height: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 2rem;
+    color: #fc8019;
+    letter-spacing: 0;
+    color: #fff;
+    background-color: #fc8019;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.12);
+    margin-left: 15px;
+  }
+  .divmainhelp
+  {
+    padding: 0 20px;
+    background: #37718e;
+    min-height: 100vh;
+  }
+  .divhelpHeader
+  {
+    margin-top: 2px;
+    font-size: 16px;
+  }
+  .divhelp{
+    color: #fff;
+    margin-bottom: 37px;
+    margin-top: 37px;
+    position: relative;
+  }
+  .divhelpContiner{
+    background: #fff;
+    contain: layout;
+    box-shadow: 0 2px 15px 0 rgba(0,0,0,.15);
+    width: 1300px;
+    margin: 0 auto;
+    position: relative;
+    
+  }
+  .divhelpContiner1{
+    min-width: 260px;
+    height: 724px;
+    width: 283px;
+    max-width: 1200px;
+    min-width: 1200px;
+    position: relative;
+    margin: 0 auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    contain: layout;
+    padding-top: 50px!important;
+    padding-bottom: 50px!important;
+  }
+  .divhelpmenu{
+    min-width: 260px;
+    background: #edf1f7;
+  }
+  .liactive {
+    background: #fff;
+}
+.liitem {
+    padding: 25px 20px;
+    margin-left: 20px;
+    cursor: pointer;
+    display: -ms-flexbox;
+    display: flex;
+    position: relative;
+}
+.divsubcon {
+    -ms-flex: 1;
+    flex: 1;
+    background: #fff;
+    padding: 37px 0 0 50px;
+    position: relative;
+    min-height: 80vh;
+}
+
+.divsubconinner{
+border-bottom: 1px solid #d4d5d9;
+}
+.subbutn {
+    padding: 16px 0 17px !important;
+    cursor: pointer  !important;
+    color: #3d4152;
+    width: 100%;
+    text-align: left;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    text-align: left;
+    font-size: 18px;
+}
+subbutn:hover {
+  color: #fc8019;
+}
+.spanfont{
+    font-size: 15px;
+    padding-bottom: 17px;
+    color: #686b78;
+}
+.subhear
+{
+    font-size: 24px;
+    font-weight: 600;
+}
+.divborderbottom{
+  border-bottom: 1px solid #d4d5d9;
+}
+
+
+
+
+
+
+/* Accordion.css */
+/* button {
+  padding: 8px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+}
+p {
+  font-size: 20px;
+  margin-top: 20px;
+}
+button:hover {
+  background-color: #3e8e41;
+}
+button:active {
+  transform: scale(0.95);
+}
+button:focus {
+  outline: none;
+} */
