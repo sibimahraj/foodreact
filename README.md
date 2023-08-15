@@ -6,7 +6,6 @@ Welcome to our Food Ordering Webpage project! This project allows users to order
 - Browse through a variety of delicious dishes.
 - Add items to your cart.
 
-
 ## Getting Started
 
 To run this project locally, follow these steps:
