@@ -115,13 +115,13 @@ const Cart = (props) => {
         });
 
         setCartList(updatedArray);
-        // setNum(num + 1);
+        setNum(num + 1);
         // const newQuantities = [...quantities];
         // newQuantities[selectedIndex] = (newQuantities[selectedIndex] || 0) + 1;
         // setQuantities(newQuantities);
-        const updatedQuantities = [...quantities];
-        updatedQuantities[selectedIndex] = (updatedQuantities[selectedIndex] || 0) + 1;
-        setQuantities(updatedQuantities);
+        // const updatedQuantities = [...quantities];
+        // updatedQuantities[selectedIndex] = (updatedQuantities[selectedIndex] || 0) + 1;
+        // setQuantities(updatedQuantities);
     };
     const minusBtn = (selectedIndex) => {
         const updatedArray = cartList.map((element, index) => {
@@ -140,13 +140,13 @@ const Cart = (props) => {
 
         setCartList(updatedArray);
 
-        //  setNum(num - 1);
+        setNum(num - 1);
         //  const newQuantities = [...quantities];
         //  newQuantities[selectedIndex] = newQuantities[selectedIndex] - 1;
         // setQuantities(newQuantities);
-        const updatedQuantities = [...quantities];
-        updatedQuantities[selectedIndex] = Math.max((updatedQuantities[selectedIndex] || 0) - 1, 0);
-        setQuantities(updatedQuantities);
+        //  const updatedQuantities = [...quantities];
+        //  updatedQuantities[selectedIndex] = Math.max((updatedQuantities[selectedIndex] || 0) - 1, 0);
+        // setQuantities(updatedQuantities);
     };
 
 
@@ -163,7 +163,7 @@ const Cart = (props) => {
                     <div className="btns">
                         <div className="align">
                             <div onClick={() => minusBtn(index)} className="minus">-</div>
-                            <div className="num">{quantities}</div>
+                            <div className="num">{num}</div>
                             <div onClick={() => addBtn(index)} className="plus">+</div>
                         </div>
                     </div>
