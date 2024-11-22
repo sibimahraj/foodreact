@@ -1,16 +1,31 @@
-# foodreact
-Welcome to our Food Ordering Webpage project! This project allows users to order food online using a user-friendly interface. It's built using HTML, CSS, and JavaScript, and it fetches data from a local JSON server that we've set up.
+import "./thank-you.scss";
+import { Player } from "@lottiefiles/react-lottie-player";
+import lottieSrc from "../../../assets/_json/lottie/thankyou_animation.json";
+import { KeyWithAnyModel } from "../../../utils/model/common-model";
+const ThankYouBanner = (props: KeyWithAnyModel) => {
+  return (
+    <div className="thankyou__banner">
+      <div className="thankyou__banner__left">
+        <div className="lottieAnime_success">
+          <Player src={lottieSrc} className="player" loop autoplay />
+        </div>
+        <label>{props.banner_header}</label>
+        {props.banner_content && (
+          <div className="body__app-desc">
+            {props.banner_body_1}
+            {props.productName} {props.banner_body_2}
+            {props.resumeUrl && (
+              <div className="body__app__btn">
+                <a rel="noreferrer" href={process.env.REACT_APP_RESUME_URL}>
+                  {props.resumeUrl}
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-## Features
-
-- Browse through a variety of delicious dishes.
-- Add items to your cart.
-
-## Getting Started
-
-To run this project locally, follow these steps:
-
-1. Clone this repository to your local machine.
-2. Install the required dependencies using [npm](https://www.npmjs.com/):
-   ```bash
-   npm install
+export default ThankYouBanner;
