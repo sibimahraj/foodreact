@@ -1713,3 +1713,91 @@ describe("ThankYouSurvey Component", () => {
     expect(surveyLink.prop("rel")).toContain("feedback noreferrer");
   });
 });
+
+import React from "react";
+import { shallow, mount } from "enzyme";
+import { Provider } from "react-redux";
+import ThankYouSurvey from "./thank-you-survey";
+import thankyouData from "../../../assets/_json/thankyou.json";
+import { createStore } from "redux";
+
+// Mock useSelector
+jest.mock("react-redux", () => ({
+  useSelector: jest.fn(),
+}));
+
+// Mock getUrl utility
+jest.mock("../../../utils/common/change.utils", () => ({
+  getUrl: {
+    getChannelRefNo: jest.fn(() => ({
+      applicationRefNo: "SG20241030600099", // Updated reference number
+    })),
+  },
+}));
+
+// A mock reducer to create a dummy store
+const mockReducer = (state = { stages: { stages: [] } }) => state;
+const store = createStore(mockReducer);
+
+describe("ThankYouSurvey Component", () => {
+  const mockStageSelector = [
+    {
+      stageInfo: {
+        products: [
+          {
+            product_category: "cc",
+          },
+        ],
+      },
+    },
+  ];
+
+  beforeEach(() => {
+    const { useSelector } = require("react-redux");
+    useSelector.mockImplementation((selectorFn: any) => selectorFn({ stages: { stages: mockStageSelector } }));
+  });
+
+  it("should render the component", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    );
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should render the feedback content correctly", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    );
+    expect(wrapper.text()).toContain(thankyouData.Survey.content_1);
+    expect(wrapper.text()).toContain(thankyouData.Survey.content_2.trim());
+    expect(wrapper.text()).toContain(thankyouData.Survey.content_3);
+  });
+
+  it("should generate the correct survey link", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    );
+    const surveyLink = wrapper.find("a");
+    const expectedLink = `${thankyouData.Survey.link}&p=cc&m=sg&c=SG20241030600099`; // Corrected link with provided reference number
+
+    expect(surveyLink.prop("href")).toEqual(expectedLink);
+  });
+
+  it("should set the correct attributes for the survey link", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    );
+    const surveyLink = wrapper.find("a");
+
+    expect(surveyLink.prop("target")).toEqual("_blank");
+    expect(surveyLink.prop("rel")).toContain("feedback noreferrer");
+  });
+});
