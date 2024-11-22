@@ -1600,3 +1600,36 @@ const survey_link = "&p="+stageSelector[0].stageInfo.products[0].product_categor
 };
 
 export default ThankYouSurvey;
+
+import React from "react";
+import { shallow } from "enzyme";
+import ThankYouSurvey from "./thank-you-survey";
+
+describe("ThankYouSurvey Component", () => {
+  it("should render the component", () => {
+    const wrapper = shallow(<ThankYouSurvey />);
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should display the feedback content", () => {
+    const wrapper = shallow(<ThankYouSurvey />);
+    expect(wrapper.text()).toContain("We'd like your feedback!");
+    expect(wrapper.text()).toContain("Click here");
+    expect(wrapper.text()).toContain("to share your experience with us.");
+  });
+
+  it("should render the survey link with correct URL", () => {
+    const wrapper = shallow(<ThankYouSurvey />);
+    const surveyLink = wrapper.find("a");
+    expect(surveyLink.exists()).toBe(true);
+    expect(surveyLink.prop("href")).toContain("https://surveys.sc.com/jfe/form/SV_9LbvckjbELelJbM?");
+  });
+
+  it("should set the correct attributes for the survey link", () => {
+    const wrapper = shallow(<ThankYouSurvey />);
+    const surveyLink = wrapper.find("a");
+
+    expect(surveyLink.prop("target")).toEqual("_blank");
+    expect(surveyLink.prop("rel")).toContain("feedback noreferrer");
+  });
+});
