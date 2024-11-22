@@ -407,3 +407,65 @@ const ThankYouCASA = (props: KeyWithAnyModel) => {
 
 export default ThankYouCASA;
 
+import { shallow } from "enzyme";
+import ThankYouCASA from "./thank-you-casa";
+
+describe("ThankYouCASA Component", () => {
+  let wrapper: any;
+
+  const defaultProps = {
+    applicationDetails: {
+      isStp: false,
+      productName: "Savings Account",
+      thankyouProp: "casaThankyou",
+      thankyouText: "casaSuccess",
+      accountNum: "1234567890",
+    },
+    thankyou: {
+      casaThankyou: {
+        banner_header: "Thank You!",
+        banner_body_1: "Your application has been submitted.",
+        banner_body_2: "We will contact you shortly.",
+        resumeUrl: "https://example.com/resume",
+        accountNumber: "Account Number:",
+        timeline_header: "Timeline Header",
+        timeline_desc: "Timeline Description",
+      },
+      STP: {
+        banner_header: "STP Header",
+        banner_body_1: "STP Body 1",
+        banner_body_2: "STP Body 2",
+      },
+      casaSuccess: {
+        timeLine: "Timeline Title",
+        applicationNumber: "Application Number:",
+        nextButton: "Continue",
+      },
+    },
+    applicationReferenceNo: "REF987654321",
+    submitForm: jest.fn(),
+  };
+
+  beforeAll(() => {
+    wrapper = shallow(<ThankYouCASA {...defaultProps} />);
+  });
+
+  it("should render the ThankYouCASA component", () => {
+    expect(wrapper).toHaveLength(1);
+  });
+
+  it("should render the ThankYouBanner component when isStp is false", () => {
+    expect(wrapper.find("ThankYouBanner")).toHaveLength(1);
+  });
+
+  it("should render the button with the correct text", () => {
+    expect(wrapper.find(".thankyou__continue").text()).toBe(
+      defaultProps.thankyou.casaSuccess.nextButton
+    );
+  });
+
+  it("should call submitForm when the button is clicked", () => {
+    wrapper.find(".thankyou__continue").simulate("click");
+    expect(defaultProps.submitForm).toHaveBeenCalled();
+  });
+});
