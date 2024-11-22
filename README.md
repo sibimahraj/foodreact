@@ -2174,3 +2174,76 @@ const ThankYouCC = (props: KeyWithAnyModel) => {
 
 export default ThankYouCC;
 
+
+import { shallow } from "enzyme";
+import ThankYouCC from "./thank-you-cc";
+
+// Mocking necessary child components or data
+jest.mock("./thankyou-banner", () => jest.fn(() => <div data-testid="thank-you-banner" />));
+jest.mock("./thankyou-timeline", () => jest.fn(() => <div data-testid="thank-you-timeline" />));
+jest.mock("./thankyou-survey", () => jest.fn(() => <div data-testid="thank-you-survey" />));
+
+describe("ThankYouCC Component", () => {
+  let wrapper: any;
+
+  const defaultProps = {
+    applicationDetails: {
+      productName: "Credit Card",
+      cardNumber: "1234 5678 9876 5432",
+      thankyouText: "thankYouTextKey",
+      thankyouProp: "Upload",
+      isStp: false,
+    },
+    thankyou: {
+      Upload: {
+        CCPL: {
+          banner_header: "Thank You!",
+          banner_body_1: "Your documents have been submitted.",
+          banner_body_2: "We'll notify you once processed.",
+          resumeUrl: "https://example.com",
+          title: "Application Submitted",
+          content: "Your application is being processed.",
+          note_title: "Important Note:",
+          note_content_1: "Please keep your application number safe.",
+          note_content_2: "We'll notify you about the next steps.",
+          note_content_3: "You can track your application status online.",
+          note_content_4: "Click here to track.",
+          note_link: "https://example.com/track",
+          timeLine: ["Step 1: Submitted", "Step 2: Processing"],
+        },
+        refId_lbl: "Application Reference Number:",
+      },
+      STPCCBanner: {
+        banner_header: "Thank You for Applying!",
+        banner_body_1: "Your application for",
+        banner_body_2: "has been received.",
+      },
+      thankYouTextKey: {
+        timeLine: "Processing Timeline",
+        doneButton: "Done",
+        continueButton: "Continue",
+        timeline_header: "Processing Steps",
+        timeline_desc: "Your application is being processed.",
+      },
+    },
+    applicationReferenceNo: "REF123456789",
+    showContinuePopup: jest.fn(),
+    submitForm: jest.fn(),
+    showOTPPopup: jest.fn(),
+  };
+
+  beforeAll(() => {
+    wrapper = shallow(<ThankYouCC {...defaultProps} />);
+  });
+
+  it("should render the ThankYouBanner component with correct props", () => {
+    expect(wrapper.find('[data-testid="thank-you-banner"]')).toHaveLength(1);
+  });
+
+  it("should render the ThankYouTimeline component", () => {
+    expect(wrapper.find('[data-testid="thank-you-timeline"]')).toHaveLength(1);
+  });
+
+  it("should render the ThankYouSurvey component", () => {
+    expect(wrapper.find('[data-testid="thank-you-survey"]')).to
+
