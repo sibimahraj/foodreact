@@ -1367,3 +1367,105 @@ const ThankYouPL = (props: KeyWithAnyModel) => {
   );
 };
 export default ThankYouPL;
+
+
+import { shallow } from "enzyme";
+import ThankYouPL from "./thank-you-pl";
+import ThankYouTimeline from "../thank-you-timeline/thank-you-timeline";
+import ThankYouSurvey from "../thank-you-survey/thank-you-survey";
+
+describe("ThankYouPL Component", () => {
+  let wrapper: any;
+
+  const mockSubmitForm = jest.fn();
+  const defaultProps = {
+    applicationDetails: {
+      thankyouText: "CCPL",
+      isStp: true,
+    },
+    enableActivation: true,
+    showPlatinum: true,
+    applicationReferenceNo: "123456",
+    submitForm: mockSubmitForm,
+  };
+
+  const thankyouMockData = {
+    CCPL: {
+      note_title: "Important Note",
+      note_content_1: "Content 1",
+      note_content_2: "Content 2",
+      note_content_3: "Content 3",
+      note_content_4: "Click here for details",
+      note_link: "https://example.com",
+      applicationNumber: "Application Number",
+    },
+    STPPLBanner: {
+      banner_body_3: "Platinum Activation Successful",
+    },
+  };
+
+  jest.mock("../../../assets/_json/thankyou.json", () => thankyouMockData);
+
+  const mockGetTimelineData = jest.fn().mockReturnValue([
+    { header: "Step 1", content: "Step 1 content", completed_status: true },
+    { header: "Step 2", content: "Step 2 content", completed_status: false },
+  ]);
+
+  beforeEach(() => {
+    wrapper = shallow(<ThankYouPL {...defaultProps} getTimelineData={mockGetTimelineData} />);
+  });
+
+  it("should render the component", () => {
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should render ThankYouTimeline with correct props", () => {
+    const timeline = wrapper.find(ThankYouTimeline);
+    expect(timeline.exists()).toBe(true);
+    expect(timeline.prop("title")).toEqual(thankyouMockData.CCPL.timeLine);
+    expect(timeline.prop("data")).toEqual(mockGetTimelineData());
+    expect(timeline.prop("checkCompletedStatus")).toBe(true);
+  });
+
+  it("should render ThankYouSurvey component", () => {
+    expect(wrapper.find(ThankYouSurvey).exists()).toBe(true);
+  });
+
+  it("should render note content correctly", () => {
+    const noteContent = wrapper.find(".thankyou__note__content");
+    expect(noteContent.at(0).find("label").text()).toEqual(thankyouMockData.CCPL.note_title);
+    expect(noteContent.at(1).text()).toContain(thankyouMockData.CCPL.note_content_1);
+    expect(noteContent.at(1).text()).toContain(thankyouMockData.CCPL.note_content_2);
+    expect(noteContent.at(2).text()).toContain(thankyouMockData.CCPL.note_content_3);
+    expect(noteContent.at(2).find("a").prop("href")).toEqual(thankyouMockData.CCPL.note_link);
+  });
+
+  it("should render application reference number", () => {
+    const appDetails = wrapper.find(".body__app-details");
+    expect(appDetails.find("label").text()).toContain(
+      thankyouMockData.CCPL.applicationNumber
+    );
+    expect(appDetails.text()).toContain(defaultProps.applicationReferenceNo);
+  });
+
+  it("should render platinum content when enableActivation and showPlatinum are true", () => {
+    const platinumContent = wrapper.find(".thankyou__pl__content");
+    expect(platinumContent.exists()).toBe(true);
+    expect(platinumContent.text()).toEqual(thankyouMockData.STPPLBanner.banner_body_3);
+  });
+
+  it("should call submitForm on button click", () => {
+    const button = wrapper.find(".thankyou__continue").at(1);
+    button.simulate("click");
+    expect(mockSubmitForm).toHaveBeenCalled();
+  });
+
+  it("should render conditional elements based on props", () => {
+    // Platinum content is rendered
+    expect(wrapper.find(".thankyou__pl__content").exists()).toBe(true);
+
+    // Modify props to disable platinum content
+    wrapper.setProps({ enableActivation: false, showPlatinum: false });
+    expect(wrapper.find(".thankyou__pl__content").exists()).toBe(false);
+  });
+});
