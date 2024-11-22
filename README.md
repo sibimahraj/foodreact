@@ -151,18 +151,12 @@ const CCWithoutActivation = (props: KeyWithAnyModel) => {
 export default CCWithoutActivation;
 
 
-import React from "react";
-import {render, screen} from "@testing-library/react"
+
 import { shallow } from "enzyme";
 import CCActivationSucess from "./cc-activation-success";
-import ThankYouBanner from "./thankyou-banner";
-import ThankYouTimeline from "./thankyou-timeline";
-import ThankYouSurvey from "./thankyou-survey";
  
  
-jest.mock("./thankyou-banner", ()=>jest.fn(()=><div data-testid="thank-you-banner"/>));
-jest.mock("./thankyou-banner", ()=>jest.fn(()=><div data-testid="thank-you-timeline"/>));
-jest.mock("./thankyou-banner", ()=>jest.fn(()=><div data-testid="thank-you-survey"/>));
+
  
 describe("CCActivationSuccess Component",()=>{
     let wrapper: any;
@@ -202,3 +196,42 @@ describe("CCActivationSuccess Component",()=>{
    
 });
 
+import { shallow } from "enzyme";
+import CCWithoutActivation from "./cc-without-activation";
+
+describe("CCWithoutActivation Component", () => {
+  let wrapper: any;
+
+  beforeAll(() => {
+    wrapper = shallow(<CCWithoutActivation {...defaultProps} />);
+  });
+
+  const defaultProps = {
+    applicationDetails: {
+      productName: "Credit Card",
+      cardNumber: "1234 5678 9876 5432",
+      thankyouText: "thankYouTextKey",
+    },
+    thankyou: {
+      CCActivation: {
+        banner: {
+          banner_header: "Activation Pending",
+        },
+        header: "Thank you for your application!",
+        timeline_header: "Processing Timeline",
+        timeLine: [
+          { step: "Application Submitted", completed: true },
+          { step: "Under Review", completed: false },
+        ],
+      },
+      CCPL: {
+        refId_lbl: "Reference ID",
+      },
+    },
+    applicationReferenceNo: "REF987654321",
+  };
+
+  it("should render the component without crashing", () => {
+    expect(wrapper).toHaveLength(1);
+  });
+});
