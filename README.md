@@ -1085,3 +1085,75 @@ const ThankYouTimeline = (props: KeyWithAnyModel) => {
 
 export default ThankYouTimeline;
 
+import { shallow } from "enzyme";
+import ThankYouTimeline from "./thank-you-timeline";
+
+describe("ThankYouTimeline Component", () => {
+  let wrapper: any;
+
+  const mockHandleLink = jest.fn();
+  const defaultProps = {
+    title: "Timeline Title",
+    data: [
+      {
+        header: "Step 1",
+        content: "This is step 1 content",
+        completed_status: true,
+      },
+      {
+        header: "Step 2",
+        content: ["Item 1", "Item 2"],
+        link_lbl: "Continue",
+        completed_status: false,
+        subcontent: "Step 2 subcontent",
+      },
+    ],
+    checkCompletedStatus: true,
+    handleLink: mockHandleLink,
+  };
+
+  beforeEach(() => {
+    wrapper = shallow(<ThankYouTimeline {...defaultProps} />);
+  });
+
+  it("should render the component", () => {
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should display the title", () => {
+    expect(wrapper.find("label").at(0).text()).toEqual(defaultProps.title);
+  });
+
+  it("should render the correct number of timeline steps", () => {
+    expect(wrapper.find(".timeline__header").length).toEqual(defaultProps.data.length);
+  });
+
+  it("should handle a button click when link_lbl is present", () => {
+    const button = wrapper.find("button.thankyou__continue");
+    expect(button.exists()).toBe(true);
+    button.simulate("click");
+    expect(mockHandleLink).toHaveBeenCalled();
+  });
+
+  it("should render subcontent when available", () => {
+    expect(wrapper.find(".timeline__sub_content").at(0).text()).toEqual(
+      defaultProps.data[1].subcontent
+    );
+  });
+
+  it("should apply outline class for incomplete steps when checkCompletedStatus is true", () => {
+    expect(wrapper.find(".timeline__circle_outline").length).toEqual(1);
+  });
+
+  it("should render content as a string or as a list", () => {
+    // First item (string content)
+    expect(wrapper.find(".timeline__desc").at(0).text()).toContain(
+      defaultProps.data[0].content
+    );
+
+    // Second item (list content)
+    const listItems = wrapper.find("ul li");
+    expect(listItems.length).toEqual(defaultProps.data[1].content.length);
+    expect(listItems.at(0).text()).toEqual(defaultProps.data[1].content[0]);
+  });
+});
