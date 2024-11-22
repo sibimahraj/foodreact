@@ -1514,3 +1514,9 @@ describe("ThankYouPL Component", () => {
     expect(mockSubmitForm).toHaveBeenCalled();
   });
 });
+
+ ThankYouPL Component
+    × should render the component (3 ms)
+    × should render ThankYouTimeline component (1 ms)
+    × should render ThankYouSurvey component
+    × should call submitForm when the button is clicked (1 ms)
