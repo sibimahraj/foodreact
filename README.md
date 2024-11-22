@@ -659,3 +659,124 @@ describe("ThankYouCASA Component", () => {
     expect(wrapper.props().children.props).toEqual(mockProps);
   });
 });
+
+
+import { Provider } from "react-redux";
+import configureMockStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import { shallow } from "enzyme";
+import ThankYouCASA from "../thank-you-casa/thank-you-casa";
+
+const mockStore = configureMockStore([thunk]);
+
+describe("ThankYouCASA Component", () => {
+  let wrapper: any;
+  let store: any;
+
+  const mockProps = {
+    applicationDetails: {
+      isStp: false,
+      productName: "Savings Account",
+      thankyouProp: "casaThankyou",
+      thankyouText: "casaSuccess",
+      accountNum: "1234567890",
+    },
+    thankyou: {
+      casaThankyou: {
+        banner_header: "Thank You!",
+        banner_body_1: "Your application has been submitted.",
+        banner_body_2: "We will contact you shortly.",
+        accountNumber: "Account Number:",
+        timeline_header: "Timeline Header",
+        timeline_desc: "Timeline Description",
+        resumeUrl: "https://resume.example.com",
+      },
+      casaSuccess: {
+        timeLine: "Timeline Title",
+        applicationNumber: "Application Number:",
+        nextButton: "Continue",
+      },
+      STP: {
+        banner_header: "STP Banner Header",
+        banner_body_1: "STP Body Content 1",
+        banner_body_2: "STP Body Content 2",
+      },
+    },
+    applicationReferenceNo: "REF987654321",
+    submitForm: jest.fn(),
+  };
+
+  beforeEach(() => {
+    const mockStoreData = {
+      stages: {
+        stages: [
+          {
+            stageInfo: {
+              application: { source_system_name: "3" },
+              products: [{ product_category: "CA" }],
+            },
+          },
+        ],
+        isDocumentUpload: false,
+      },
+    };
+
+    store = mockStore(mockStoreData);
+
+    wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouCASA {...mockProps} />
+      </Provider>
+    );
+  });
+
+  it("should render ThankYouCASA component", () => {
+    expect(wrapper).toHaveLength(1);
+  });
+
+  it("should render ThankYouBanner with correct props for non-STP flow", () => {
+    const banner = wrapper.find("ThankYouBanner");
+    expect(banner).toHaveLength(1);
+    expect(banner.props().banner_header).toEqual(mockProps.thankyou.casaThankyou.banner_header);
+  });
+
+  it("should render ThankYouBanner with correct props for STP flow", () => {
+    wrapper.setProps({
+      applicationDetails: {
+        ...mockProps.applicationDetails,
+        isStp: true,
+      },
+    });
+    const banner = wrapper.find("ThankYouBanner");
+    expect(banner).toHaveLength(1);
+    expect(banner.props().banner_header).toEqual(mockProps.thankyou.STP.banner_header);
+  });
+
+  it("should render account number if isStp is true", () => {
+    wrapper.setProps({
+      applicationDetails: {
+        ...mockProps.applicationDetails,
+        isStp: true,
+      },
+    });
+    const accountNumber = wrapper.find(".body__accn-no label");
+    expect(accountNumber.text()).toContain(mockProps.thankyou.casaThankyou.accountNumber);
+  });
+
+  it("should render timeline data", () => {
+    const timeline = wrapper.find("ThankYouTimeline");
+    expect(timeline).toHaveLength(1);
+    expect(timeline.props().data).toBeDefined();
+  });
+
+  it("should render survey component", () => {
+    const survey = wrapper.find("ThankYouSurvey");
+    expect(survey).toHaveLength(1);
+  });
+
+  it("should call submitForm on button click", () => {
+    const button = wrapper.find(".thankyou__continue");
+    button.simulate("click");
+    expect(mockProps.submitForm).toHaveBeenCalled();
+  });
+});
