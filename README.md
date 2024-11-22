@@ -1520,3 +1520,49 @@ describe("ThankYouPL Component", () => {
     × should render ThankYouTimeline component (1 ms)
     × should render ThankYouSurvey component
     × should call submitForm when the button is clicked (1 ms)
+
+import React from "react";
+import { shallow, ShallowWrapper } from "enzyme";
+import ThankYouPL from "./thank-you-pl";
+import ThankYouTimeline from "../thank-you-timeline/thank-you-timeline";
+import ThankYouSurvey from "../thank-you-survey/thank-you-survey";
+
+describe("ThankYouPL Component", () => {
+  let wrapper: ShallowWrapper;
+
+  const mockSubmitForm = jest.fn();
+  const defaultProps = {
+    applicationDetails: {
+      thankyouText: "CCPL",
+      isStp: true,
+    },
+    enableActivation: true,
+    showPlatinum: true,
+    applicationReferenceNo: "123456",
+    submitForm: mockSubmitForm,
+  };
+
+  beforeEach(() => {
+    wrapper = shallow(<ThankYouPL {...defaultProps} />);
+  });
+
+  it("should render the component", () => {
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should render ThankYouTimeline component", () => {
+    const timeline = wrapper.find(ThankYouTimeline);
+    expect(timeline.exists()).toBe(true);
+  });
+
+  it("should render ThankYouSurvey component", () => {
+    const survey = wrapper.find(ThankYouSurvey);
+    expect(survey.exists()).toBe(true);
+  });
+
+  it("should call submitForm when the button is clicked", () => {
+    const button = wrapper.find(".thankyou__continue").at(0); // Ensure the button index is correct
+    button.simulate("click");
+    expect(mockSubmitForm).toHaveBeenCalled();
+  });
+});
