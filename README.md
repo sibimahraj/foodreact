@@ -150,3 +150,55 @@ const CCWithoutActivation = (props: KeyWithAnyModel) => {
 
 export default CCWithoutActivation;
 
+
+import React from "react";
+import {render, screen} from "@testing-library/react"
+import { shallow } from "enzyme";
+import CCActivationSucess from "./cc-activation-success";
+import ThankYouBanner from "./thankyou-banner";
+import ThankYouTimeline from "./thankyou-timeline";
+import ThankYouSurvey from "./thankyou-survey";
+ 
+ 
+jest.mock("./thankyou-banner", ()=>jest.fn(()=><div data-testid="thank-you-banner"/>));
+jest.mock("./thankyou-banner", ()=>jest.fn(()=><div data-testid="thank-you-timeline"/>));
+jest.mock("./thankyou-banner", ()=>jest.fn(()=><div data-testid="thank-you-survey"/>));
+ 
+describe("CCActivationSuccess Component",()=>{
+    let wrapper: any;
+    beforeAll(()=>{
+        wrapper= shallow(<CCActivationSucess {...defaultProps}/>);
+    });
+    const defaultProps ={
+        applicationDetails:{
+            productName:"Credit Card",
+            cardNumber:"1234 5678 9876 5432",
+        },
+        thankyou:{
+            CCActivation:{
+                banner:{
+                    banner_header:"Activation Successful!",
+                },
+                header:"Congratulations on your new card!",
+                timeline_header: "Activation Timeline",
+                successTimeline:[
+                    {step:"Application Submitted",completed:true},
+                    {step:"Verification completed",completed:true},
+                    {step:"Card Activated",completed:true},
+                ],
+                successNote:"Your card is now ready to use.",
+            },
+            CCPL:{
+                refId_lbl:"1212323"
+            }
+        },
+    };
+
+
+    it("render the ThankYouBanner component with correct props",()=>{
+        expect(wrapper).toHaveLength(1);
+    });
+  
+   
+});
+
