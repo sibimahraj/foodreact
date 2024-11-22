@@ -1854,3 +1854,58 @@ describe('ThankYouSurvey component', () => {
 });
 ```
 
+
+import { shallow } from "enzyme";
+import CCWithoutActivation from "./cc-without-activation";
+
+jest.mock("./thankyou-banner", () => jest.fn(() => <div data-testid="thank-you-banner" />));
+jest.mock("./thankyou-timeline", () => jest.fn(() => <div data-testid="thank-you-timeline" />));
+jest.mock("./thankyou-survey", () => jest.fn(() => <div data-testid="thank-you-survey" />));
+
+
+describe("CCWithoutActivation Component", () => {
+  let wrapper: any;
+
+  const defaultProps = {
+    applicationDetails: {
+      productName: "Credit Card",
+      cardNumber: "1234 5678 9876 5432",
+      thankyouText: "thankYouTextKey",
+    },
+    thankyou: {
+      CCActivation: {
+        banner: {
+          banner_header: "Activation Pending",
+          content_header: "Your application is under review.",
+        },
+        timeLine: ["Step 1: Submitted", "Step 2: Under Review"],
+      },
+      thankYouTextKey: {
+        timeLine: "Pending Timeline",
+        iBankingButton: "Check Application Status",
+      },
+      CCPL: {
+        refId_lbl: "Reference ID:",
+      },
+    },
+    applicationReferenceNo: "REF123456789",
+    goToIBanking: jest.fn(),
+  };
+
+  beforeAll(() => {
+    wrapper = shallow(<CCWithoutActivation {...defaultProps} />);
+  });
+
+  it("should render the ThankYouBanner component with correct props", () => {
+    expect(wrapper.find('[data-testid="thank-you-banner"]')).toHaveLength(0);
+  });
+
+  it("should render the ThankYouTimeline component with correct props", () => {
+    expect(wrapper.find('[data-testid="thank-you-timeline"]')).toHaveLength(0);
+  });
+
+  it("should render the ThankYouSurvey component", () => {
+    expect(wrapper.find('[data-testid="thank-you-survey"]')).toHaveLength(0);
+  });
+});
+
