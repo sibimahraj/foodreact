@@ -2492,3 +2492,61 @@ describe("ThankYouCC Component", () => {
     expect(wrapper.find(".thankyou__title").text()).toContain("1234 5678 9876 5432");
   });
 });
+Player } from "@lottiefiles/react-lottie-player";
+import lottieSrc from "../../../assets/_json/lottie/thankyou_animation.json";
+import { KeyWithAnyModel } from "../../../utils/model/common-model";
+const ThankYouBanner = (props: KeyWithAnyModel) => {
+  return (
+    <div className="thankyou__banner">
+      <div className="thankyou__banner__left">
+        <div className="lottieAnime_success">
+          <Player src={lottieSrc} className="player" loop autoplay />
+        </div>
+        <label>{props.banner_header}</label>
+        {props.banner_content && (
+          <div className="body__app-desc">
+            {props.banner_body_1}
+            {props.productName} {}
+            {props.resumeUrl && (
+              <div className="body__app__btn">
+                <a rel="noreferrer" href={process.env.REACT_APP_RESUME_URL}>
+                  {props.resumeUrl}
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ThankYouBanner;
+
+
+
+
+
+import React from "react";
+import { shallow } from "enzyme";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import ThankYouCC from "./thank-you-cc";
+
+jest.mock("./thankyou-banner", () => () => <div data-testid="thank-you-banner" />);
+jest.mock("./thankyou-timeline", () => () => <div data-testid="thank-you-timeline" />);
+jest.mock("./thankyou-survey", () => () => <div data-testid="thank-you-survey" />);
+
+describe("ThankYouCC Component", () => {
+  const mockStore = configureStore([]);
+  const store = mockStore({}); // Add the necessary initial state
+
+  it("should render the ThankYouCC component with Provider", () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouCC />
+      </Provider>
+    );
+    expect(wrapper.exists()).toBe(true);
+  });
+});
