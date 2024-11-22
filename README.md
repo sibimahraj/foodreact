@@ -932,3 +932,38 @@ const survey_link = "&p="+stageSelector[0].stageInfo.products[0].product_categor
 };
 
 export default ThankYouSurvey;
+
+import { shallow } from "enzyme";
+import ThankYouSurvey from "./thank-you-survey";
+ 
+describe("ThankYouSurvey Component", () => {
+  let wrapper: any;
+  
+  const defaultProps = {
+    Survey: {
+      content_1: "Thank you for completing the survey!",
+      content_2: "Click here to provide feedback.",
+      content_3: "We value your input.",
+      link: "https://example.com/survey?",
+    },
+  };
+
+  beforeAll(() => {
+    wrapper = shallow(<ThankYouSurvey {...defaultProps} />);
+  });
+
+  it("should render ThankYouSurvey component with correct props", () => {
+    expect(wrapper).toHaveLength(1);
+  });
+
+  it("should render the correct content", () => {
+    expect(wrapper.text()).toContain(defaultProps.Survey.content_1);
+    expect(wrapper.text()).toContain(defaultProps.Survey.content_2);
+    expect(wrapper.text()).toContain(defaultProps.Survey.content_3);
+  });
+
+  it("should have the correct survey link", () => {
+    const link = wrapper.find('a');
+    expect(link.prop('href')).toContain(defaultProps.Survey.link);
+  });
+});
