@@ -1801,3 +1801,56 @@ describe("ThankYouSurvey Component", () => {
     expect(surveyLink.prop("rel")).toContain("feedback noreferrer");
   });
 });
+
+Here's the updated test case:
+
+```
+import React from 'react';
+import { shallow, configure } from 'enzyme';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import ThankYouSurvey from './ThankYouSurvey';
+
+configure({ adapter: new Adapter() });
+
+const thankyouData = {
+  "content_1": "We'd like your feedback!",
+  "link": "(link unavailable)",
+  "content_2": " Click here ",
+  "content_3": " to share your experience with us."
+};
+
+const initialState = {};
+const mockStore = configureStore(initialState);
+const store = mockStore(initialState);
+
+describe('ThankYouSurvey component', () => {
+  it('renders survey link with correct URL', () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    );
+    const surveyLink = wrapper.find('a');
+
+    expect(surveyLink.prop('href')).toContain(thankyouData.link);
+  });
+
+  it('renders survey content', () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    );
+    const content1 = wrapper.find('div').at(0).text();
+    const content2 = wrapper.find('a').text();
+    const content3 = wrapper.find('div').at(1).text();
+
+    expect(content1).toBe(thankyouData.content_1);
+    expect(content2).toBe(thankyouData.content_2);
+    expect(content3).toBe(thankyouData.content_3);
+  });
+});
+```
+
