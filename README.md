@@ -780,3 +780,129 @@ describe("ThankYouCASA Component", () => {
     expect(mockProps.submitForm).toHaveBeenCalled();
   });
 });
+
+import React from "react";
+import { Provider } from "react-redux";
+import configureMockStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import { shallow, mount } from "enzyme";
+import ThankYouCASA from "../thank-you-casa";
+import * as redux from "react-redux";
+
+// Mock props and data
+const mockStore = configureMockStore([thunk]);
+const store = mockStore({
+  stages: {
+    stages: [
+      {
+        stageInfo: {
+          application: { source_system_name: "3" },
+          products: [{ product_category: "CA" }],
+        },
+      },
+    ],
+  },
+});
+
+const mockProps = {
+  applicationDetails: {
+    isStp: true,
+    thankyouProp: {
+      banner_header: "Header",
+      banner_body_1: "Body1",
+      banner_body_2: "Body2",
+      resumeUrl: "/resume",
+      accountNumber: "1234567890",
+    },
+    thankyouText: {
+      nextButton: "Continue",
+      timeLine: "Timeline",
+    },
+  },
+  thankyou: { key: "value" },
+  submitForm: jest.fn(),
+};
+
+jest.mock("@shared/components/casa-banner/casa-banner", () => () => (
+  <div>Mock CasaBanner</div>
+));
+
+jest.mock("react-redux", () => ({
+  ...jest.requireActual("react-redux"),
+  useSelector: jest.fn(),
+}));
+
+jest.mock("../../../utils/getUrl", () => ({
+  getParameterByName: jest.fn((param) => (param === "auth" ? "upload" : null)),
+}));
+
+// Test suite
+describe("ThankYouCASA Component", () => {
+  let useSelectorSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    useSelectorSpy = jest.spyOn(redux, "useSelector");
+    useSelectorSpy.mockReturnValue(store.getState().stages.stages);
+
+    jest.clearAllMocks();
+  });
+
+  it("should render the component with mock props", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouCASA {...mockProps} />
+      </Provider>
+    );
+
+    expect(wrapper.find("ThankYouCASA").length).toBe(1);
+    expect(wrapper.text()).toContain("Header");
+    expect(wrapper.text()).toContain("Body1");
+    expect(wrapper.text()).toContain("Body2");
+    expect(wrapper.find("button").text()).toBe("Continue");
+  });
+
+  it("should trigger useEffect and call setIsFunding", () => {
+    const setIsFunding = jest.fn();
+    React.useState = jest.fn(() => [false, setIsFunding]);
+
+    shallow(
+      <Provider store={store}>
+        <ThankYouCASA {...mockProps} />
+      </Provider>
+    );
+
+    expect(setIsFunding).toHaveBeenCalledWith(true);
+  });
+
+  it("should handle button click event", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouCASA {...mockProps} />
+      </Provider>
+    );
+
+    wrapper.find("button").simulate("click");
+    expect(mockProps.submitForm).toHaveBeenCalled();
+  });
+
+  it("should conditionally render elements based on applicationDetails.isStp", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouCASA {...mockProps} />
+      </Provider>
+    );
+
+    // Ensure STP-specific elements are rendered
+    expect(wrapper.text()).toContain(mockProps.applicationDetails.thankyouProp.accountNumber);
+  });
+
+  it("should render CasaBanner lazily", () => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ThankYouCASA {...mockProps} />
+      </Provider>
+    );
+
+    expect(wrapper.text()).toContain("Mock CasaBanner");
+  });
+});
