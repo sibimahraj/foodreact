@@ -1,4 +1,4 @@
-import "./thank-you.scss";
+noimport "./thank-you.scss";
 import { Player } from "@lottiefiles/react-lottie-player";
 import lottieSrc from "../../../assets/_json/lottie/thankyou_animation.json";
 import { KeyWithAnyModel } from "../../../utils/model/common-model";
@@ -1467,5 +1467,50 @@ describe("ThankYouPL Component", () => {
     // Modify props to disable platinum content
     wrapper.setProps({ enableActivation: false, showPlatinum: false });
     expect(wrapper.find(".thankyou__pl__content").exists()).toBe(false);
+  });
+});
+
+import React from "react";
+import { shallow } from "enzyme";
+import ThankYouPL from "./thank-you-pl";
+import ThankYouTimeline from "../thank-you-timeline/thank-you-timeline";
+import ThankYouSurvey from "../thank-you-survey/thank-you-survey";
+
+describe("ThankYouPL Component", () => {
+  let wrapper;
+
+  const mockSubmitForm = jest.fn();
+  const defaultProps = {
+    applicationDetails: {
+      thankyouText: "CCPL",
+    },
+    enableActivation: true,
+    showPlatinum: true,
+    applicationReferenceNo: "123456",
+    submitForm: mockSubmitForm,
+  };
+
+  beforeEach(() => {
+    wrapper = shallow(<ThankYouPL {...defaultProps} />);
+  });
+
+  it("should render the component", () => {
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should render ThankYouTimeline component", () => {
+    const timeline = wrapper.find(ThankYouTimeline);
+    expect(timeline.exists()).toBe(true);
+  });
+
+  it("should render ThankYouSurvey component", () => {
+    const survey = wrapper.find(ThankYouSurvey);
+    expect(survey.exists()).toBe(true);
+  });
+
+  it("should call submitForm when the button is clicked", () => {
+    const button = wrapper.find(".thankyou__continue");
+    button.simulate("click");
+    expect(mockSubmitForm).toHaveBeenCalled();
   });
 });
