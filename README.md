@@ -511,3 +511,71 @@ describe("ThankYouCASA Component", () => {
     expect(wrapper).toHaveLength(1);
   });
 });
+
+import { Provider } from "react-redux";
+import configureMockStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import { shallow } from "enzyme";
+import ThankYouCASA from "../thank-you-casa/thank-you-casa";
+
+const mockStore = configureMockStore([thunk]);
+
+describe("ThankYouCASA Component", () => {
+  let wrapper: any;
+  let store: any;
+
+  const defaultProps = {
+    applicationDetails: {
+      isStp: false,
+      productName: "Savings Account",
+      thankyouProp: "casaThankyou",
+      thankyouText: "casaSuccess",
+      accountNum: "1234567890",
+    },
+    thankyou: {
+      casaThankyou: {
+        banner_header: "Thank You!",
+        banner_body_1: "Your application has been submitted.",
+        banner_body_2: "We will contact you shortly.",
+        accountNumber: "Account Number:",
+        timeline_header: "Timeline Header",
+        timeline_desc: "Timeline Description",
+      },
+      casaSuccess: {
+        timeLine: "Timeline Title",
+        applicationNumber: "Application Number:",
+        nextButton: "Continue",
+      },
+    },
+    applicationReferenceNo: "REF987654321",
+    submitForm: jest.fn(),
+  };
+
+  beforeEach(() => {
+    const mockStoreData = {
+      stages: {
+        stages: [
+          {
+            stageInfo: {
+              application: { source_system_name: "3" },
+              products: [{ product_category: "CA" }],
+            },
+          },
+        ],
+        isDocumentUpload: false,
+      },
+    };
+
+    store = mockStore(mockStoreData);
+
+    wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouCASA {...defaultProps} />
+      </Provider>
+    );
+  });
+
+  it("should render ThankYouCASA component", () => {
+    expect(wrapper).toHaveLength(1);
+  });
+});
