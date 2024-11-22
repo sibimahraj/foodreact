@@ -67,3 +67,33 @@ describe('Thank you screen', () => {
     expect(wrapper.find('.thankyou').length).toEqual(0)
   })
 })
+
+
+import { shallow } from "enzyme";
+import ThankYouBanner from "../thank-you-banner/ThankYouBanner";
+
+jest.autoMockOff();
+jest.mock("@lottiefiles/react-lottie-player", () => ({
+  __esModule: true,
+}));
+
+let wrapper: any;
+
+beforeEach(() => {
+  const mockProps = {
+    banner_header: "Thank You!",
+    banner_content: true,
+    banner_body_1: "Congratulations on completing the process.",
+    productName: "Product X",
+    banner_body_2: " is now available for you.",
+    resumeUrl: "Click here to download your resume",
+  };
+
+  wrapper = shallow(<ThankYouBanner {...mockProps} />);
+});
+
+describe("ThankYouBanner Component", () => {
+  it("should render the thank you banner component", () => {
+    expect(wrapper.find(".thankyou__banner").length).toEqual(1);
+  });
+});
