@@ -469,3 +469,45 @@ describe("ThankYouCASA Component", () => {
     expect(defaultProps.submitForm).toHaveBeenCalled();
   });
 });
+
+import { shallow } from "enzyme";
+import ThankYouCASA from "../thank-you-casa/thank-you-casa";
+
+describe("ThankYouCASA Component", () => {
+  let wrapper: any;
+
+  const defaultProps = {
+    applicationDetails: {
+      isStp: false,
+      productName: "Savings Account",
+      thankyouProp: "casaThankyou",
+      thankyouText: "casaSuccess",
+      accountNum: "1234567890",
+    },
+    thankyou: {
+      casaThankyou: {
+        banner_header: "Thank You!",
+        banner_body_1: "Your application has been submitted.",
+        banner_body_2: "We will contact you shortly.",
+        accountNumber: "Account Number:",
+        timeline_header: "Timeline Header",
+        timeline_desc: "Timeline Description",
+      },
+      casaSuccess: {
+        timeLine: "Timeline Title",
+        applicationNumber: "Application Number:",
+        nextButton: "Continue",
+      },
+    },
+    applicationReferenceNo: "REF987654321",
+    submitForm: jest.fn(),
+  };
+
+  beforeEach(() => {
+    wrapper = shallow(<ThankYouCASA {...defaultProps} />);
+  });
+
+  it("should render the ThankYouCASA component", () => {
+    expect(wrapper).toHaveLength(1);
+  });
+});
