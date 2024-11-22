@@ -2387,3 +2387,108 @@ describe("ThankYouCC Component with Provider", () => {
     expect(screen.getByText("1234 5678 9876 5432")).toBeInTheDocument();
   });
 });
+
+import { shallow } from "enzyme";
+import ThankYouCC from "./thank-you-cc";
+
+jest.mock("./thankyou-banner", () => jest.fn(() => <div data-testid="thank-you-banner" />));
+jest.mock("./thankyou-timeline", () => jest.fn(() => <div data-testid="thank-you-timeline" />));
+jest.mock("./thankyou-survey", () => jest.fn(() => <div data-testid="thank-you-survey" />));
+
+describe("ThankYouCC Component", () => {
+  const mockApplicationDetails = {
+    productName: "Credit Card",
+    cardNumber: "1234 5678 9876 5432",
+    thankyouText: "thankYouTextKey",
+    thankyouProp: "Upload",
+    isStp: false,
+  };
+
+  const mockThankyou = {
+    Upload: {
+      CCPL: {
+        banner_header: "Thank You!",
+        banner_body_1: "Your documents have been submitted.",
+        banner_body_2: "We'll notify you once processed.",
+        resumeUrl: "https://example.com",
+        title: "Application Submitted",
+        content: "Your application is being processed.",
+        note_title: "Important Note:",
+        note_content_1: "Please keep your application number safe.",
+        note_content_2: "We'll notify you about the next steps.",
+        note_content_3: "You can track your application status online.",
+        note_content_4: "Click here to track.",
+        note_link: "https://example.com/track",
+        timeLine: ["Step 1: Submitted", "Step 2: Processing"],
+      },
+      refId_lbl: "Application Reference Number:",
+    },
+    STPCCBanner: {
+      banner_header: "Thank You for Applying!",
+      banner_body_1: "Your application for",
+      banner_body_2: "has been received.",
+    },
+    thankYouTextKey: {
+      timeLine: "Processing Timeline",
+      doneButton: "Done",
+      continueButton: "Continue",
+      timeline_header: "Processing Steps",
+      timeline_desc: "Your application is being processed.",
+    },
+  };
+
+  const mockApplicationReferenceNo = "REF123456789";
+
+  const wrapper = shallow(
+    <ThankYouCC
+      applicationDetails={mockApplicationDetails}
+      thankyou={mockThankyou}
+      applicationReferenceNo={mockApplicationReferenceNo}
+      showContinuePopup={jest.fn()}
+      submitForm={jest.fn()}
+      showOTPPopup={jest.fn()}
+    />
+  );
+
+  it("renders ThankYouBanner component", () => {
+    expect(wrapper.find('[data-testid="thank-you-banner"]')).toHaveLength(1);
+  });
+
+  it("renders ThankYouTimeline component", () => {
+    expect(wrapper.find('[data-testid="thank-you-timeline"]')).toHaveLength(1);
+  });
+
+  it("renders ThankYouSurvey component", () => {
+    expect(wrapper.find('[data-testid="thank-you-survey"]')).toHaveLength(1);
+  });
+
+  it("displays the correct reference number", () => {
+    expect(wrapper.find(".body__app-details").text()).toContain("REF123456789");
+  });
+
+  it("renders Done button for non-STP flow", () => {
+    const button = wrapper.find("button.thankyou__continue");
+    expect(button.text()).toBe("Done");
+  });
+
+  it("renders Continue button for STP flow", () => {
+    wrapper.setProps({
+      applicationDetails: { ...mockApplicationDetails, isStp: true },
+    });
+    const button = wrapper.find("button.thankyou__continue");
+    expect(button.text()).toBe("Continue");
+  });
+
+  it("displays note content for non-STP flow", () => {
+    expect(wrapper.find(".thankyou__note__content").at(0).text()).toContain("Important Note:");
+    expect(wrapper.find(".thankyou__note__content").at(1).text()).toContain("Please keep your application number safe.");
+  });
+
+  it("renders product name and card details for STP flow", () => {
+    wrapper.setProps({
+      applicationDetails: { ...mockApplicationDetails, isStp: true },
+    });
+    expect(wrapper.find(".thankyou__title").text()).toContain("Credit Card");
+    expect(wrapper.find(".thankyou__title").text()).toContain("1234 5678 9876 5432");
+  });
+});
