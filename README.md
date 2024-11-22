@@ -967,3 +967,63 @@ describe("ThankYouSurvey Component", () => {
     expect(link.prop('href')).toContain(defaultProps.Survey.link);
   });
 });
+
+
+import { shallow } from "enzyme";
+import { Provider } from "react-redux";
+import configureMockStore from "redux-mock-store";
+import ThankYouSurvey from "./thank-you-survey";
+
+const mockStore = configureMockStore();
+let wrapper: any;
+let store: any;
+
+const defaultProps = {
+  Survey: {
+    content_1: "Thank you for completing the survey!",
+    content_2: "Click here to provide feedback.",
+    content_3: "We value your input.",
+    link: "https://example.com/survey?",
+  },
+};
+
+describe("ThankYouSurvey Component", () => {
+  beforeAll(() => {
+    store = mockStore({
+      stages: {
+        stages: [
+          {
+            stageInfo: {
+              products: [
+                {
+                  product_category: "credit-card",
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+
+    wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouSurvey {...defaultProps} />
+      </Provider>
+    );
+  });
+
+  it("should render ThankYouSurvey component with correct props", () => {
+    expect(wrapper.find(ThankYouSurvey)).toHaveLength(1);
+  });
+
+  it("should render the correct content", () => {
+    expect(wrapper.text()).toContain(defaultProps.Survey.content_1);
+    expect(wrapper.text()).toContain(defaultProps.Survey.content_2);
+    expect(wrapper.text()).toContain(defaultProps.Survey.content_3);
+  });
+
+  it("should have the correct survey link", () => {
+    const link = wrapper.find('a');
+    expect(link.prop('href')).toContain(defaultProps.Survey.link);
+  });
+});
