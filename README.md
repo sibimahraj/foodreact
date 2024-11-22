@@ -1633,3 +1633,83 @@ describe("ThankYouSurvey Component", () => {
     expect(surveyLink.prop("rel")).toContain("feedback noreferrer");
   });
 });
+
+
+
+import React from "react";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import { shallow } from "enzyme";
+import ThankYouSurvey from "./thank-you-survey";
+
+// Mock data
+const mockThankYouData = {
+  Survey: {
+    content_1: "We'd like your feedback!",
+    link: "https://surveys.sc.com/jfe/form/SV_9LbvckjbELelJbM?",
+    content_2: "Click here",
+    content_3: "to share your experience with us.",
+  },
+};
+
+// Create mock Redux store
+const mockStore = configureStore([]);
+const initialState = {
+  stages: {
+    stages: [],
+  },
+};
+const store = mockStore(initialState);
+
+describe("ThankYouSurvey Component", () => {
+  it("should render the component", () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    );
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should display feedback content", () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    )
+      .dive() // Dive into the Provider
+      .dive(); // Dive into the component
+
+    expect(wrapper.text()).toContain(mockThankYouData.Survey.content_1);
+    expect(wrapper.text()).toContain(mockThankYouData.Survey.content_2);
+    expect(wrapper.text()).toContain(mockThankYouData.Survey.content_3);
+  });
+
+  it("should render the survey link with the correct URL", () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    )
+      .dive()
+      .dive();
+
+    const surveyLink = wrapper.find("a");
+    expect(surveyLink.exists()).toBe(true);
+    expect(surveyLink.prop("href")).toContain(mockThankYouData.Survey.link);
+  });
+
+  it("should set correct attributes for the survey link", () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ThankYouSurvey />
+      </Provider>
+    )
+      .dive()
+      .dive();
+
+    const surveyLink = wrapper.find("a");
+    expect(surveyLink.prop("target")).toEqual("_blank");
+    expect(surveyLink.prop("rel")).toContain("feedback noreferrer");
+  });
+});
