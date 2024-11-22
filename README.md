@@ -1973,3 +1973,63 @@ return (
 };
 
 export default ThankYouUpload;
+
+import { shallow } from "enzyme";
+import ThankYouUpload from "./thank-you-upload";
+
+// Mocking necessary child components or data
+jest.mock("./thankyou-banner", () => jest.fn(() => <div data-testid="thank-you-banner" />));
+jest.mock("./thankyou-timeline", () => jest.fn(() => <div data-testid="thank-you-timeline" />));
+
+describe("ThankYouUpload Component", () => {
+  let wrapper: any;
+
+  // Default props setup
+  const defaultProps = {
+    applicationDetails: {
+      productName: "Credit Card",
+      cardNumber: "1234 5678 9876 5432",
+      thankyouText: "thankYouTextKey",
+    },
+    thankyou: {
+      Upload: {
+        banner_header_upload: "Documents Uploaded",
+        timeline_desc_upload: "Documents are under review",
+        timeLine_upload: "Review Timeline",
+        nextButton: "Continue",
+      },
+      thankYouTextKey: {
+        applicationNumber: "Application Number",
+      },
+    },
+    applicationReferenceNo: "SG20241030600099",
+    submitForm: jest.fn(),
+  };
+
+  beforeAll(() => {
+    wrapper = shallow(<ThankYouUpload {...defaultProps} />);
+  });
+
+  it("should render the ThankYouBanner component", () => {
+    expect(wrapper.find('[data-testid="thank-you-banner"]')).toHaveLength(1);
+  });
+
+  it("should render the ThankYouTimeline component with correct props", () => {
+    expect(wrapper.find('[data-testid="thank-you-timeline"]')).toHaveLength(1);
+  });
+
+  it("should render the application reference number correctly", () => {
+    expect(wrapper.find(".app-details__ref-no").text()).toBe("SG20241030600099");
+  });
+
+  it("should call submitForm when the Continue button is clicked", () => {
+    const button = wrapper.find("button.thankyou__continue");
+    button.simulate("click", { preventDefault: () => {} });
+    expect(defaultProps.submitForm).toHaveBeenCalled();
+  });
+
+  it("should render the nextButton text correctly", () => {
+    const button = wrapper.find("button.thankyou__continue");
+    expect(button.text()).toBe("Continue");
+  });
+});
