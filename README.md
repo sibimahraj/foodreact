@@ -97,3 +97,56 @@ describe("ThankYouBanner Component", () => {
     expect(wrapper.find(".thankyou__banner").length).toEqual(1);
   });
 });
+
+import "./thank-you.scss";
+import { KeyWithAnyModel } from "../../../utils/model/common-model";
+import ThankYouTimeline from "./thankyou-timeline";
+import ThankYouBanner from "./thankyou-banner";
+import ThankYouSurvey from "./thankyou-survey"
+
+const CCWithoutActivation = (props: KeyWithAnyModel) => {
+  const applicationDetails = props.applicationDetails;
+  const thankyou = props.thankyou;
+  return (
+    <>
+      <ThankYouBanner
+        banner_header={thankyou.CCActivation.banner.banner_header}
+        banner_content={false}
+      />
+      <div className="thankyou__body__outer">
+        <div className="thankyou__body">
+          <div className="thankyou__title">
+            {thankyou.CCActivation.banner.content_header}
+          </div>
+          <div className="thankyou__title">
+            <div>{applicationDetails.productName}</div>
+            <div>
+              <label>{applicationDetails.cardNumber}</label>
+            </div>
+          </div>
+          <ThankYouTimeline
+            title={thankyou[applicationDetails.thankyouText].timeLine}
+            data={thankyou.CCActivation.timeLine}
+            checkCompletedStatus={true}
+          />
+          <ThankYouSurvey/>
+          <div className="body__app-details">
+            <label>{thankyou.CCPL.refId_lbl}</label>
+            {props.applicationReferenceNo!}
+          </div>
+          {/* <div className="body__refno">
+            <button
+              onClick={(e) => props.goToIBanking(e)}
+              className="thankyou__continue"
+            >
+              {thankyou[applicationDetails.thankyouText].iBankingButton}
+            </button>
+          </div> */}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default CCWithoutActivation;
+
