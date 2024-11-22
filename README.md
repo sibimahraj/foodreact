@@ -2247,3 +2247,143 @@ describe("ThankYouCC Component", () => {
   it("should render the ThankYouSurvey component", () => {
     expect(wrapper.find('[data-testid="thank-you-survey"]')).to
 
+
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import { render, screen, fireEvent } from "@testing-library/react";
+import ThankYouCC from "./thank-you-cc";
+
+// Mocked store and initial state
+const mockStore = configureStore([]);
+const initialState = {
+  thankyou: {
+    Upload: {
+      CCPL: {
+        banner_header: "Thank You!",
+        banner_body_1: "Your documents have been submitted.",
+        banner_body_2: "We'll notify you once processed.",
+        resumeUrl: "https://example.com",
+        title: "Application Submitted",
+        content: "Your application is being processed.",
+        note_title: "Important Note:",
+        note_content_1: "Please keep your application number safe.",
+        note_content_2: "We'll notify you about the next steps.",
+        note_content_3: "You can track your application status online.",
+        note_content_4: "Click here to track.",
+        note_link: "https://example.com/track",
+        timeLine: ["Step 1: Submitted", "Step 2: Processing"],
+      },
+      refId_lbl: "Application Reference Number:",
+    },
+    STPCCBanner: {
+      banner_header: "Thank You for Applying!",
+      banner_body_1: "Your application for",
+      banner_body_2: "has been received.",
+    },
+    thankYouTextKey: {
+      timeLine: "Processing Timeline",
+      doneButton: "Done",
+      continueButton: "Continue",
+      timeline_header: "Processing Steps",
+      timeline_desc: "Your application is being processed.",
+    },
+  },
+  applicationDetails: {
+    productName: "Credit Card",
+    cardNumber: "1234 5678 9876 5432",
+    thankyouText: "thankYouTextKey",
+    thankyouProp: "Upload",
+    isStp: false,
+  },
+};
+
+// Mock props
+const mockProps = {
+  applicationReferenceNo: "REF123456789",
+  showContinuePopup: jest.fn(),
+  submitForm: jest.fn(),
+  showOTPPopup: jest.fn(),
+};
+
+describe("ThankYouCC Component with Provider", () => {
+  let store: any;
+
+  beforeEach(() => {
+    store = mockStore(initialState);
+  });
+
+  it("should render the ThankYouCC component with Provider", () => {
+    render(
+      <Provider store={store}>
+        <ThankYouCC {...mockProps} />
+      </Provider>
+    );
+
+    expect(screen.getByText("Thank You!")).toBeInTheDocument();
+    expect(screen.getByText("Your documents have been submitted.")).toBeInTheDocument();
+    expect(screen.getByText("Application Submitted")).toBeInTheDocument();
+    expect(screen.getByText("REF123456789")).toBeInTheDocument();
+  });
+
+  it("should render the Done button for non-STP flow and handle click", () => {
+    render(
+      <Provider store={store}>
+        <ThankYouCC {...mockProps} />
+      </Provider>
+    );
+
+    const doneButton = screen.getByText("Done");
+    expect(doneButton).toBeInTheDocument();
+    fireEvent.click(doneButton);
+    expect(mockProps.submitForm).toHaveBeenCalled();
+  });
+
+  it("should render the Continue button for STP flow and handle click", () => {
+    const stpState = {
+      ...initialState,
+      applicationDetails: { ...initialState.applicationDetails, isStp: true },
+    };
+    store = mockStore(stpState);
+
+    render(
+      <Provider store={store}>
+        <ThankYouCC {...mockProps} />
+      </Provider>
+    );
+
+    const continueButton = screen.getByText("Continue");
+    expect(continueButton).toBeInTheDocument();
+    fireEvent.click(continueButton);
+    expect(mockProps.showContinuePopup).toHaveBeenCalled();
+  });
+
+  it("should render notes for non-STP flow", () => {
+    render(
+      <Provider store={store}>
+        <ThankYouCC {...mockProps} />
+      </Provider>
+    );
+
+    expect(screen.getByText("Important Note:")).toBeInTheDocument();
+    expect(screen.getByText("Please keep your application number safe.")).toBeInTheDocument();
+    expect(screen.getByText("Click here to track.")).toHaveAttribute("href", "https://example.com/track");
+  });
+
+  it("should display product and card details for STP flow", () => {
+    const stpState = {
+      ...initialState,
+      applicationDetails: { ...initialState.applicationDetails, isStp: true },
+    };
+    store = mockStore(stpState);
+
+    render(
+      <Provider store={store}>
+        <ThankYouCC {...mockProps} />
+      </Provider>
+    );
+
+    expect(screen.getByText("Your application for")).toBeInTheDocument();
+    expect(screen.getByText("Credit Card")).toBeInTheDocument();
+    expect(screen.getByText("1234 5678 9876 5432")).toBeInTheDocument();
+  });
+});
