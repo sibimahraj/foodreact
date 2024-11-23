@@ -3640,4 +3640,75 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+import React from "react";
+import { shallow } from "enzyme";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import Dashboard from "./Dashboard"; // Adjust the path as per your folder structure
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
+describe("Dashboard Component", () => {
+  let mockDispatch, mockNavigate, mockUseLocation;
+
+  beforeEach(() => {
+    mockDispatch = jest.fn();
+    useDispatch.mockReturnValue(mockDispatch);
+
+    mockNavigate = jest.fn();
+    useNavigate.mockReturnValue(mockNavigate);
+
+    mockUseLocation = { pathname: "/dashboard" };
+    useLocation.mockReturnValue(mockUseLocation);
+
+    // Mock useSelector
+    useSelector.mockImplementation((selector) => {
+      switch (selector.name) {
+        case "stageSelector":
+          return [{ stageId: "bd-3" }];
+        case "otpShowSelector":
+          return false;
+        case "myInfoAuthSelector":
+          return false;
+        default:
+          return null;
+      }
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should render the Dashboard component without crashing", () => {
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should dispatch actions on load", () => {
+    shallow(<Dashboard />);
+    expect(mockDispatch).toHaveBeenCalled();
+  });
+
+  it("should call navigate if fieldsComponent is set", () => {
+    const wrapper = shallow(<Dashboard />);
+    wrapper.find(".app__body").simulate("click");
+    expect(mockNavigate).toHaveBeenCalledWith("sg/super-short-form");
+  });
+
+  it("should show popup model if URL is invalid", () => {
+    useSelector.mockReturnValueOnce(true); // Mock urlInvalid as true
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper.find("PopupModel").prop("displayPopup")).toBe(true);
+  });
+});
+
 
