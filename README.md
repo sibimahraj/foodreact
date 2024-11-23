@@ -2745,3 +2745,137 @@ const ThankYou = () => {
 
 export default ThankYou;
 
+
+import React from 'react';
+import { shallow } from 'enzyme';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { ThankYou } from './ThankYou'; // adjust the import path if needed
+import { StoreModel } from '../../../utils/model/common-model';
+import ThankYouCC from './thankyou-cc';
+import PopupModel from '../../../shared/components/popup-model/popup-model';
+import { activateDigitalCard } from '../../../services/common-service';
+
+jest.mock('react-redux', () => ({
+  useSelector: jest.fn(),
+  useDispatch: jest.fn(),
+}));
+
+jest.mock('react-router-dom', () => ({
+  useNavigate: jest.fn(),
+}));
+
+jest.mock('../../../services/common-service', () => ({
+  activateDigitalCard: jest.fn(),
+}));
+
+describe('ThankYou Component', () => {
+  let mockDispatch: jest.Mock;
+  let mockNavigate: jest.Mock;
+
+  beforeEach(() => {
+    mockDispatch = jest.fn();
+    mockNavigate = jest.fn();
+
+    // Mock the Redux store data
+    useSelector.mockImplementation((callback) =>
+      callback({
+        stages: {
+          stages: [
+            {
+              stageInfo: {
+                application: { application_reference: '12345' },
+                products: [
+                  {
+                    product_category: 'CC',
+                    name: 'Credit Card',
+                    product_sequence_number: '123',
+                    product_type: 'Type A',
+                    acct_details: [
+                      {
+                        account_number: '987654321',
+                        card_no: '123456789',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          otpSuccess: true,
+        },
+      } as StoreModel)
+    );
+
+    useDispatch.mockReturnValue(mockDispatch);
+    useNavigate.mockReturnValue(mockNavigate);
+  });
+
+  it('should render the ThankYou component correctly', () => {
+    const wrapper = shallow(<ThankYou />);
+
+    // Check that the form is rendered
+    expect(wrapper.find('form.thankyou').length).toBe(1);
+
+    // Check if ThankYouCC is rendered for "CC" product category
+    expect(wrapper.find(ThankYouCC).length).toBe(1);
+  });
+
+  it('should call activateDigitalCard when OTP is successful', () => {
+    // Set up a mock for OTP success
+    useSelector.mockImplementationOnce((callback) =>
+      callback({
+        stages: {
+          stages: [
+            {
+              stageInfo: {
+                application: { application_reference: '12345' },
+                products: [
+                  {
+                    product_category: 'CC',
+                    name: 'Credit Card',
+                    product_sequence_number: '123',
+                    product_type: 'Type A',
+                    acct_details: [
+                      {
+                        account_number: '987654321',
+                        card_no: '123456789',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          otpSuccess: true, // Simulate OTP success
+        },
+      } as StoreModel)
+    );
+
+    // Re-render component
+    shallow(<ThankYou />);
+
+    // Ensure activateDigitalCard is called when OTP success is true
+    expect(activateDigitalCard).toHaveBeenCalled();
+  });
+
+  it('should navigate to OTP page when showOTPPopup is called', () => {
+    const wrapper = shallow(<ThankYou />);
+
+    // Find the showOTPPopup function and simulate a click or trigger
+    wrapper.instance().showOTPPopup();
+
+    // Ensure the navigate function is called with the correct route
+    expect(mockNavigate).toHaveBeenCalledWith('/otp');
+  });
+
+  it('should show PopupModel when showContinueWithoutActivationMsg is true', () => {
+    const wrapper = shallow(<ThankYou />);
+
+    // Simulate showing the popup
+    wrapper.setState({ showContinueWithoutActivationMsg: true });
+
+    // Check if PopupModel is rendered
+    expect(wrapper.find(PopupModel).length).toBe(1);
+  });
+});
