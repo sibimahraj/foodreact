@@ -2983,3 +2983,149 @@ describe("Dashboard Testing useLayoufEffect", () => {
   expect(mockNavigate).toHaveBeenCalledWith('sg/super-short-form'); 
 });
 });
+
+import React from 'react';
+import { render, cleanup } from '@testing-library/react';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import ThankYou from './ThankYou';
+import thankyouData from "../../../assets/_json/thankyou.json";
+
+jest.autoMockOff();
+jest.mock("axios", () => ({
+  __esModule: true,
+}));
+jest.mock("@lottiefiles/react-lottie-player", () => ({
+  __esModule: true,
+}));
+
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
+let store;
+
+beforeEach(() => {
+  global.scrollTo = jest.fn();
+  store = mockStore({
+    stages: {
+      stages: [
+        {
+          stageInfo: {
+            application: { application_reference: '12345' },
+            products: [
+              {
+                product_category: 'CC',
+                name: 'Credit Card',
+                product_sequence_number: '001',
+                product_type: 'Type A',
+                acct_details: [
+                  {
+                    account_number: '12345678',
+                    card_no: '87654321'
+                  }
+                ]
+              }
+            ],
+            applicants: {
+              embossed_name_a_1: 'John Doe'
+            }
+          },
+          stageId: 'stage-1'
+        }
+      ],
+      otpSuccess: false,
+      isDocumentUpload: false,
+      journeyType: 'NTB'
+    }
+  });
+});
+afterEach(() => {
+  jest.resetAllMocks();
+});
+afterAll(() => {
+  cleanup();
+  jest.clearAllMocks();
+});
+
+jest.mock('react-redux', () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock('react-router-dom', () => ({
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
+describe('ThankYou Component Testing', () => {
+  let mockDispatch;
+  let mockNavigate;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockDispatch = jest.fn();
+    mockNavigate = jest.fn();
+
+    jest.spyOn(React, 'useState')
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()]);
+
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+    (useSelector as jest.Mock).mockClear();
+
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.toString().includes('state.stages.stages')) {
+        return [{
+          "stageId": "stage-1",
+          "stageInfo": {
+            "application": {
+              "application_reference": '12345'
+            },
+            "products": [
+              {
+                "product_category": 'CC',
+                "name": 'Credit Card',
+                "product_sequence_number": '001',
+                "product_type": 'Type A',
+                "acct_details": [
+                  {
+                    "account_number": '12345678',
+                    "card_no": '87654321'
+                  }
+                ]
+              }
+            ],
+            "applicants": {
+              "embossed_name_a_1": 'John Doe'
+            }
+          }
+        }];
+      } else if (selectorFn.toString().includes('state.stages.otpSuccess')) {
+        return false;
+      } else if (selectorFn.toString().includes('state.stages.isDocumentUpload')) {
+        return false;
+      }
+      return undefined;
+    });
+  });
+
+  it('should render ThankYou component with correct details', async () => {
+    render(
+      <ThankYou />
+    );
+
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled(); // As navigate is not used directly in useEffect
+
+    // Check if specific elements are in the document
+    expect(screen.getByText(/Credit Card/i)).toBeInTheDocument();
+    expect(screen.getByText(/12345678/i)).toBeInTheDocument();
+    expect(screen.getByText(/87654321/i)).toBeInTheDocument();
+  });
+});
