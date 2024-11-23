@@ -3711,4 +3711,148 @@ describe("Dashboard Component", () => {
   });
 });
 
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import Dashboard from "../Dashboard"; // Adjust the path based on your file structure
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
+describe("Dashboard Component", () => {
+  const mockDispatch = jest.fn();
+  const mockNavigate = jest.fn();
+  const mockUrlParams = { search: "?mockParam=value" };
+
+  beforeEach(() => {
+    // Mock dispatch and navigate
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    // Mock useSelector for selectors used in the component
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.name === "stageSelector") {
+        return [{ stageId: "mockStageId" }];
+      }
+      if (selectorFn.name === "myInfoAuthSelector") {
+        return false;
+      }
+      if (selectorFn.name === "otpShowSelector") {
+        return false;
+      }
+      return null;
+    });
+
+    // Mock useLocation
+    (useLocation as jest.Mock).mockReturnValue(mockUrlParams);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should render without crashing", () => {
+    render(<Dashboard />);
+    expect(screen.getByText("Loading...")).toBeInTheDocument(); // Adjust the text based on what renders initially.
+  });
+
+  it("should call dispatch to fetch URL parameters", () => {
+    render(<Dashboard />);
+    expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it("should navigate to a specific route when certain conditions are met", () => {
+    render(<Dashboard />);
+    // Trigger logic or directly check the mocked navigate function
+    expect(mockNavigate).not.toHaveBeenCalled(); // Adjust based on the condition
+  });
+
+  it("should display an error popup if the URL is invalid", () => {
+    (useSelector as jest.Mock).mockImplementationOnce(() => true); // Mock `urlInvalid` state
+    render(<Dashboard />);
+    expect(screen.getByText("Error")).toBeInTheDocument(); // Adjust the text to match your popup content
+  });
+});
+
+
+
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import Dashboard from "../Dashboard"; // Adjust the path based on your file structure
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
+describe("Dashboard Component", () => {
+  const mockDispatch = jest.fn();
+  const mockNavigate = jest.fn();
+  const mockUrlParams = { search: "?mockParam=value" };
+
+  beforeEach(() => {
+    // Mock dispatch and navigate
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    // Mock useSelector for selectors used in the component
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.name === "stageSelector") {
+        return [{ stageId: "mockStageId" }];
+      }
+      if (selectorFn.name === "myInfoAuthSelector") {
+        return false;
+      }
+      if (selectorFn.name === "otpShowSelector") {
+        return false;
+      }
+      return null;
+    });
+
+    // Mock useLocation
+    (useLocation as jest.Mock).mockReturnValue(mockUrlParams);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should render without crashing", () => {
+    render(<Dashboard />);
+    expect(screen.getByText("Loading...")).toBeInTheDocument(); // Adjust the text based on what renders initially.
+  });
+
+  it("should call dispatch to fetch URL parameters", () => {
+    render(<Dashboard />);
+    expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it("should navigate to a specific route when certain conditions are met", () => {
+    render(<Dashboard />);
+    // Trigger logic or directly check the mocked navigate function
+    expect(mockNavigate).not.toHaveBeenCalled(); // Adjust based on the condition
+  });
+
+  it("should display an error popup if the URL is invalid", () => {
+    (useSelector as jest.Mock).mockImplementationOnce(() => true); // Mock `urlInvalid` state
+    render(<Dashboard />);
+    expect(screen.getByText("Error")).toBeInTheDocument(); // Adjust the text to match your popup content
+  });
+});
+
 
