@@ -4368,3 +4368,78 @@ const ThankYou = () => {
 export default ThankYou;
 
 
+import React from "react";
+import { shallow } from "enzyme";
+import ThankYou from "../ThankYou";
+import ThankYouCC from "../ThankYouCC";
+import PopupModel from "../PopupModel";
+import ThankyouError from "../ThankyouError";
+import CCWithoutActivation from "../CCWithoutActivation";
+import CCActivationSucess from "../CCActivationSuccess";
+
+describe("ThankYou Component", () => {
+  const mockApplicationDetails = {
+    productCategory: "CC",
+  };
+  const mockThankyou = jest.fn();
+  const mockApplicationReferenceNo = "12345";
+  const mockSubmitForm = jest.fn();
+  const mockActivateCard = jest.fn();
+  const mockShowContinuePopup = jest.fn();
+  const mockShowOTPPopup = jest.fn();
+  const mockGoToIBanking = jest.fn();
+  const mockHandlePopupBackButton = jest.fn();
+  const mockContinueWithoutActivation = jest.fn();
+
+  const defaultProps = {
+    applicationDetails: mockApplicationDetails,
+    thankyou: mockThankyou,
+    applicationReferenceNo: mockApplicationReferenceNo,
+    submitForm: mockSubmitForm,
+    activateCard: mockActivateCard,
+    showContinuePopup: mockShowContinuePopup,
+    showOTPPopup: mockShowOTPPopup,
+    goToIBanking: mockGoToIBanking,
+    handlePopupBackButton: mockHandlePopupBackButton,
+    continueWithoutActivation: mockContinueWithoutActivation,
+    continueWithoutActivationUI: false,
+    cardActivationSuccessUI: false,
+    showContinueWithoutActivationMsg: false,
+    showErrorUI: false,
+  };
+
+  it("should render ThankYouCC when productCategory is 'CC'", () => {
+    const wrapper = shallow(<ThankYou {...defaultProps} />);
+    expect(wrapper.find(ThankYouCC)).toHaveLength(1);
+  });
+
+  it("should render PopupModel when showContinueWithoutActivationMsg is true", () => {
+    const wrapper = shallow(
+      <ThankYou {...defaultProps} showContinueWithoutActivationMsg={true} />
+    );
+    expect(wrapper.find(PopupModel)).toHaveLength(1);
+  });
+
+  it("should render CCWithoutActivation when continueWithoutActivationUI is true", () => {
+    const wrapper = shallow(
+      <ThankYou {...defaultProps} continueWithoutActivationUI={true} />
+    );
+    expect(wrapper.find(CCWithoutActivation)).toHaveLength(1);
+  });
+
+  it("should render CCActivationSucess when cardActivationSuccessUI is true", () => {
+    const wrapper = shallow(
+      <ThankYou {...defaultProps} cardActivationSuccessUI={true} />
+    );
+    expect(wrapper.find(CCActivationSucess)).toHaveLength(1);
+  });
+
+  it("should render ThankyouError when showErrorUI is true", () => {
+    const wrapper = shallow(
+      <ThankYou {...defaultProps} showErrorUI={true} />
+    );
+    expect(wrapper.find(ThankyouError)).toHaveLength(1);
+  });
+});
+
+
