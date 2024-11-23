@@ -4187,3 +4187,178 @@ describe("ThankYou Component Testing", () => {
 
     render(<ThankYou />);
     // Add assertions to
+
+    import { configure, shallow } from "enzyme";
+import Adapter from "enzyme-adapter-react-16"; // Adjust adapter based on React version
+import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import ThankYou from "./thank-you";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+configure({ adapter: new Adapter() });
+
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
+let store;
+
+jest.mock("axios", () => ({
+  __esModule: true,
+}));
+jest.mock("@lottiefiles/react-lottie-player", () => ({
+  __esModule: true,
+}));
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
+describe("ThankYou Component Testing", () => {
+  let mockDispatch;
+  let mockNavigate;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockDispatch = jest.fn();
+    mockNavigate = jest.fn();
+
+    store = mockStore({
+      stages: {
+        stages: [
+          {
+            stageId: "stage-1",
+            stageInfo: {
+              application: {
+                application_reference: "12345",
+              },
+              products: [
+                {
+                  product_category: "CC",
+                  name: "Credit Card",
+                  product_sequence_number: "001",
+                  acct_details: [
+                    { account_number: "12345678", card_no: "87654321" },
+                  ],
+                  product_type: "Type A",
+                },
+              ],
+              applicants: {
+                embossed_name_a_1: "John Doe",
+              },
+            },
+          },
+        ],
+        otpSuccess: false,
+        isDocumentUpload: false,
+      },
+    });
+
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.toString().includes("state.stages.stages")) {
+        return [
+          {
+            stageId: "stage-1",
+            stageInfo: {
+              application: {
+                application_reference: "12345",
+              },
+              products: [
+                {
+                  product_category: "CC",
+                  name: "Credit Card",
+                  product_sequence_number: "001",
+                  acct_details: [
+                    { account_number: "12345678", card_no: "87654321" },
+                  ],
+                  product_type: "Type A",
+                },
+              ],
+              applicants: {
+                embossed_name_a_1: "John Doe",
+              },
+            },
+          },
+        ];
+      } else if (selectorFn.toString().includes("state.stages.otpSuccess")) {
+        return false;
+      } else if (selectorFn.toString().includes("state.stages.isDocumentUpload")) {
+        return false;
+      }
+      return undefined;
+    });
+  });
+
+  it("should render ThankYou component", () => {
+    const wrapper = shallow(<ThankYou />);
+    expect(wrapper.text()).toContain("Credit Card");
+    expect(wrapper.text()).toContain("12345678");
+    expect(wrapper.text()).toContain("87654321");
+  });
+
+  it("should dispatch and navigate on success", async () => {
+    const mockResponse = { data: "mockResponseData" };
+    mockDispatch.mockImplementation((action) => {
+      if (typeof action === "function") {
+        return Promise.resolve(mockResponse);
+      }
+      return action;
+    });
+
+    const wrapper = shallow(<ThankYou />);
+    expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function));
+    await Promise.resolve();
+    expect(mockNavigate).toHaveBeenCalledWith("/some-path");
+  });
+
+  it("should handle different product categories", () => {
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.toString().includes("state.stages.stages")) {
+        return [
+          {
+            stageId: "stage-1",
+            stageInfo: {
+              application: {
+                application_reference: "12345",
+              },
+              products: [
+                {
+                  product_category: "PL",
+                  name: "Personal Loan",
+                  product_sequence_number: "002",
+                  acct_details: [{ account_number: "87654321" }],
+                  product_type: "Type B",
+                  offer_details: [{ fees: [{ fee_amount: "100" }] }],
+                  campaign: "Campaign1",
+                },
+              ],
+              applicants: {
+                loan_tenor_a_1: "12",
+                required_loan_amount_a_1: 10000,
+                auth_mode_a_1: "Y",
+              },
+            },
+          },
+        ];
+      }
+      return undefined;
+    });
+
+    const wrapper = shallow(<ThankYou />);
+    expect(wrapper.text()).toContain("Personal Loan");
+    expect(wrapper.text()).toContain("87654321");
+    expect(wrapper.text()).toContain("100");
+    expect(wrapper.text()).toContain("12");
+    expect(wrapper.text()).toContain("10000");
+  });
+
+  // Additional tests can follow the same pattern
+});
