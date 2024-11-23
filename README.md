@@ -3129,3 +3129,129 @@ describe('ThankYou Component Testing', () => {
     expect(screen.getByText(/87654321/i)).toBeInTheDocument();
   });
 });
+
+
+import { render, cleanup, screen } from "@testing-library/react";
+import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import React from "react";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import ThankYou from "./ThankYou";
+import storeMockData from "../../../utils/mock/store-spec.json";
+import { useNavigate } from "react-router-dom";
+
+// Mocking the necessary hooks and modules
+jest.mock("axios", () => ({
+  __esModule: true,
+}));
+jest.mock("@lottiefiles/react-lottie-player", () => ({
+  __esModule: true,
+}));
+jest.mock('react-redux', () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+jest.mock('react-router-dom', () => ({
+  useNavigate: jest.fn(),
+}));
+
+// Configuring the mock store
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
+let store;
+
+beforeEach(() => {
+  global.scrollTo = jest.fn();
+  store = mockStore(storeMockData);
+});
+
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
+describe("ThankYou Component Tests", () => {
+  let mockDispatch;
+  let mockNavigate;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockDispatch = jest.fn();
+    mockNavigate = jest.fn();
+
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.toString().includes('state.stages.stages')) {
+        return [{
+          "stageId": "stage-1",
+          "stageInfo": {
+            "application": {
+              "application_reference": '12345'
+            },
+            "products": [
+              {
+                "product_category": 'CC',
+                "name": 'Credit Card',
+                "product_sequence_number": '001',
+                "product_type": 'Type A',
+                "acct_details": [
+                  {
+                    "account_number": '12345678',
+                    "card_no": '87654321'
+                  }
+                ]
+              }
+            ],
+            "applicants": {
+              "embossed_name_a_1": "John Doe"
+            }
+          }
+        }];
+      } else if (selectorFn.toString().includes('state.stages.otpSuccess')) {
+        return true;
+      } else if (selectorFn.toString().includes('state.stages.isDocumentUpload')) {
+        return false;
+      }
+      return undefined;
+    });
+
+    jest.spyOn(React, 'useState')
+      .mockImplementationOnce(() => [{ productCategory: "", productName: "", acct_details: [], account_number: "", thankyouProp: "NSTP", accountNum: "", thankyouText: "Common", thankyouFeedback: "Feedback", feedbackUrl: "", isStp: false, loanTenureMonths: "", approvedLoan: 0, productType: "", feeAmount: "", card_no: "", cardNumber: "", cardName: "", productSequenceNo: "" }, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()])
+      .mockImplementationOnce(() => [false, jest.fn()]);
+  });
+
+  it("renders ThankYou component with Credit Card details", async () => {
+    render(
+      <Provider store={store}>
+        <ThankYou />
+      </Provider>
+    );
+
+    expect(screen.getByText(/Credit Card/i)).toBeInTheDocument();
+    expect(screen.getByText(/12345678/i)).toBeInTheDocument();
+    expect(screen.getByText(/87654321/i)).toBeInTheDocument();
+  });
+
+  it('should dispatch actions and navigate on success', async () => {
+    const mockResponse = { data: 'mockResponseData' };
+    mockDispatch.mockImplementation((action) => {
+      if (typeof action === 'function') {
+        return Promise.resolve(mockResponse);
+      }
+      return action;
+    });
+
+    render(
+      <Provider store={store}>
+        <ThankYou />
+      </Provider>
+    );
+
+    expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function));
+    await Promise.resolve();
+    expect(mockNavigate).toHaveBeenCalledWith('/path-to-navigate'); // Adjust the path as needed
+  });
+});
