@@ -3855,4 +3855,150 @@ describe("Dashboard Component", () => {
   });
 });
 
+import React from "react";
+import { shallow } from "enzyme";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import Dashboard from "../Dashboard"; // Adjust the path based on your file structure
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
+describe("Dashboard Component (Shallow)", () => {
+  const mockDispatch = jest.fn();
+  const mockNavigate = jest.fn();
+  const mockUrlParams = { search: "?mockParam=value" };
+
+  beforeEach(() => {
+    // Mock dispatch and navigate
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    // Mock useSelector for selectors used in the component
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.name === "stageSelector") {
+        return [{ stageId: "mockStageId" }];
+      }
+      if (selectorFn.name === "myInfoAuthSelector") {
+        return false;
+      }
+      if (selectorFn.name === "otpShowSelector") {
+        return false;
+      }
+      return null;
+    });
+
+    // Mock useLocation
+    (useLocation as jest.Mock).mockReturnValue(mockUrlParams);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should render the component without crashing", () => {
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should call dispatch to fetch URL parameters", () => {
+    shallow(<Dashboard />);
+    expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it("should display the correct initial state or loading text", () => {
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper.text()).toContain("Loading..."); // Adjust based on your component's initial state
+  });
+
+  it("should trigger navigate when certain conditions are met", () => {
+    shallow(<Dashboard />);
+    expect(mockNavigate).not.toHaveBeenCalled(); // Adjust based on your component logic
+  });
+
+  it("should handle invalid URL cases", ()
+
+
+  
+import React from "react";
+import { shallow } from "enzyme";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import Dashboard from "../Dashboard"; // Adjust the path based on your file structure
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
+describe("Dashboard Component (Shallow)", () => {
+  const mockDispatch = jest.fn();
+  const mockNavigate = jest.fn();
+  const mockUrlParams = { search: "?mockParam=value" };
+
+  beforeEach(() => {
+    // Mock dispatch and navigate
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    // Mock useSelector for selectors used in the component
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.name === "stageSelector") {
+        return [{ stageId: "mockStageId" }];
+      }
+      if (selectorFn.name === "myInfoAuthSelector") {
+        return false;
+      }
+      if (selectorFn.name === "otpShowSelector") {
+        return false;
+      }
+      return null;
+    });
+
+    // Mock useLocation
+    (useLocation as jest.Mock).mockReturnValue(mockUrlParams);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should render the component without crashing", () => {
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it("should call dispatch to fetch URL parameters", () => {
+    shallow(<Dashboard />);
+    expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it("should display the correct initial state or loading text", () => {
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper.text()).toContain("Loading..."); // Adjust based on your component's initial state
+  });
+
+  it("should trigger navigate when certain conditions are met", () => {
+    shallow(<Dashboard />);
+    expect(mockNavigate).not.toHaveBeenCalled(); // Adjust based on your component logic
+  });
+
+  it("should handle invalid URL cases", () => {
+    (useSelector as jest.Mock).mockImplementationOnce(() => true); // Mock `urlInvalid` state
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper.text()).toContain("Error"); // Adjust to match your error content
+  });
+});
 
