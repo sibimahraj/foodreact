@@ -4362,3 +4362,39 @@ describe("ThankYou Component Testing", () => {
 
   // Additional tests can follow the same pattern
 });
+// Reorder props before rendering
+const reorderedData = [
+  ...props.data
+].sort((a, b) => {
+  if (a.logical_field_name === "job_title") return -1; // Ensure job_title comes first
+  if (b.logical_field_name === "job_title") return 1;
+  return 0; // Maintain the rest in the original order
+});
+
+// Then you can use this reorderedData in your JSX rendering
+return (
+  <>
+    {reorderedData.map((field) => (
+      <div key={field.logical_field_name} className="dropdown-select">
+        <label htmlFor={field.logical_field_name}>
+          {field.rwb_label_name}
+        </label>
+        <input
+          type="text"
+          className={`dropdown-select__input dropdown-select__${field.logical_field_name}`}
+          id={fieldIdAppend(field)}
+          placeholder={placeHolderText(field.logical_field_name)}
+          onChange={() => {
+            // Do nothing on change
+          }}
+        />
+        {errors && errorsMessage.length > 0 && (
+          <span className="error-msg">
+            Please select {field.rwb_label_name}
+          </span>
+        )}
+      </div>
+    ))}
+  </>
+);
+
