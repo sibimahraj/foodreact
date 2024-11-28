@@ -4397,4 +4397,112 @@ return (
     ))}
   </>
 );
+<div className="dropdown-select">
+        <label htmlFor={props.data.logical_field_name}>
+          {props.data.rwb_label_name}
+          {isCountryTaxResideancyField && (
+            <span onClick={() => removeTaxField()} className="remove-button">
+              Delete
+            </span>
+          )}
+        </label>
+        <div
+          className={`dropdown-select__field ${
+            isMyinfo || props.data.editable ? "disabled" : ""
+          }`}
+          onClick={(event) => dropdownHandler(event)}
+          onFocus={focusHandler.bind(this, props.data.logical_field_name)}
+        >
+          {selectedValue &&
+            selectedValue.length > 0 &&
+            selectedValue.map((item: LovInputValModel) => {
+              return (
+                <div
+                  className="dropdown-select__fieldlabel"
+                  key={item.CODE_VALUE}
+                >
+                  <span>{item.CODE_DESC}</span>
+                  <span
+                    className="multi-close"
+                    onClick={(
+                      e: React.MouseEvent<HTMLDivElement, MouseEvent>
+                    ) => removeSelectedValues(e, item)}
+                  ></span>
+                </div>
+              );
+            })}
+          {!(selectedValue && selectedValue.length > 0) && (
+            <input
+              type="text"
+              className="dropdown-select__input"
+              id={fieldIdAppend(props)}
+              placeholder={placeHolderText(props.data.logical_field_name)}
+              onChange={() => {
+                //do nothing
+              }}
+            />
+          )}
+        </div>
+        {errors && (
+        <span className="error-msg">
+          Please select {props.data.rwb_label_name}
+        </span>
+      )}
+      {/* {errorsMessage.length < 0  && ( */}
+        <span className= "error-msg"
+        >{errorsMessage}</span>
+      {/* )} */}
+      
+        {show && selectedOption && (
+          <div className="dropdown-select__background">
+            <div className="dropdown-select__bg-curve"></div>
+            <div className="dropdown-select__popup">
+              <div className="dropdown-select__header">
+                <div>{props.data.rwb_label_name}</div>
+                <div className="close" onClick={close}></div>
+              </div>
+
+              <div className="dropdown-select__search">
+                <input
+                  autoFocus
+                  name="search"
+                  className="dropdown-select__search"
+                  type="search"
+                  placeholder="Search"
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+              </div>
+              {
+                <div className="dropdown-select__expand">
+                  {selectedOption
+                    .filter((item: LovInputValModel) =>
+                      item.CODE_DESC.toLowerCase().includes(
+                        search.toLowerCase()
+                      )
+                    )
+                    .map((item: LovInputValModel, index: number) => {
+                      return (
+                        <div key={index} className="dropdown-select__item">
+                          <input
+                            type="radio"
+                            checked={item.checked}
+                            onClick={() => addUserInput(item)}
+                            onChange={() => {
+                              //do nothing
+                            }}
+                            value={item.CODE_VALUE}
+                            id={item.CODE_VALUE}
+                          />
+                          <label htmlFor={item.CODE_VALUE}>
+                            {item.CODE_DESC}
+                          </label>
+                        </div>
+                      );
+                    })}
+                </div>
+              }
+            </div>
+          </div>
+        )}
+      </div>
 
