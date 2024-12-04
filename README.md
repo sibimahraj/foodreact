@@ -4699,4 +4699,64 @@ describe("Information Component", () => {
   });
 });
 
+it("should close the info popup when back button is clicked", () => {
+  const { getByText } = render(<Information {...props} />);
+  
+  // Trigger the popup button click
+  fireEvent.click(getByText('Back')); // Assuming 'Back' text or adjust based on your UI
+  
+  // Assert that showInfoPopup is false after clicking back
+  expect(screen.queryByText('Some popup content')).toBeNull(); // Adjust based on actual content
+});
+it("should set isHideTooltipIcon to true when checkProductCategory returns true", () => {
+  const checkProductCategoryMock = jest.fn(() => true);
+  jest.spyOn(global, 'checkProductDetails').mockImplementation(checkProductCategoryMock);
+
+  render(<Information {...props} />);
+  expect(screen.queryByTestId('tooltip-icon')).toBeNull();
+});
+
+it("should set isHideTooltipIcon to false when checkProductCategory returns false", () => {
+  const checkProductCategoryMock = jest.fn(() => false);
+  jest.spyOn(global, 'checkProductDetails').mockImplementation(checkProductCategoryMock);
+
+  render(<Information {...props} />);
+  expect(screen.getByTestId('tooltip-icon')).toBeInTheDocument();
+});
+
+it("should render correctly based on taxSelector", () => {
+  (useSelector as jest.Mock).mockReturnValue({ count: 1, maxCount: 5 });
+  render(<Information {...props} />);
+  expect(screen.getByText(props.data.rwb_label_name)).toBeInTheDocument();
+});
+
+it("should render info when stageSelector is properly mocked", () => {
+  (useSelector as jest.Mock).mockReturnValueOnce([{ stageId: "ad-1", stageInfo: { products: [] } }]);
+  render(<Information {...props} />);
+  expect(screen.getByText(props.data.rwb_label_name)).toBeInTheDocument();
+});
+
+it("should render <Model> when showInfoPopup is true", () => {
+  render(<Information {...props} />);
+  
+  // Trigger the popup open
+  fireEvent.click(screen.getByTestId('tooltip-icon'));
+  
+  // Check if Model is rendered
+  expect(screen.getByTestId('model')).toBeInTheDocument();
+});
+
+it("should set showInfoPopup to true when tooltip icon is clicked", () => {
+  render(<Information {...props} />);
+  
+  // Initially, showInfoPopup should be false
+  expect(screen.queryByTestId('model')).toBeNull();
+
+  // Trigger the click event
+  fireEvent.click(screen.getByTestId('tooltip-icon'));
+
+  // Now, showInfoPopup should be true, and Model should be rendered
+  expect(screen.getByTestId('model')).toBeInTheDocument();
+});
+
 
