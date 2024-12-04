@@ -4516,4 +4516,12 @@ return (
           </div>
         )}
       </div>
+      export const fieldError = (fieldErrorSelector: any, props: KeyWithAnyModel) => {
+  debugger
+  if (fieldErrorSelector) {
+    if (Object.keys(fieldErrorSelector).length > 0) {
+      return fieldErrorSelector.hasOwnProperty(props.data.logical_field_name);
+    }
+  }
+};
 
