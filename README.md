@@ -4594,5 +4594,109 @@ export const Information = (props: any) => {
 };
 
 export default Information;
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { Information } from "./Information";
+import { useSelector } from "react-redux";
+import DOMPurify from "dompurify";
+import "@testing-library/jest-dom";
+
+jest.mock("react-redux", () => ({
+  useSelector: jest.fn(),
+}));
+
+jest.mock("dompurify", () => ({
+  sanitize: jest.fn((value) => value),
+}));
+
+describe("Information Component", () => {
+  const mockProps = {
+    data: {
+      rwb_label_name: "Test Label",
+      logical_field_name: "add_tax_residency_note",
+      info_tooltips: "Yes",
+      details: { info: "Some details" },
+    },
+  };
+
+  beforeEach(() => {
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.toString().includes("state.stages.stages")) {
+        return [
+          {
+            stageId: "ad-1",
+            stageInfo: {
+              products: [
+                {
+                  product_category: "CC",
+                },
+              ],
+            },
+          },
+        ];
+      } else if (selectorFn.toString().includes("state.tax")) {
+        return { count: 2, maxCount: 5 };
+      }
+      return undefined;
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("renders Information component with default props", () => {
+    render(<Information {...mockProps} />);
+
+    // Ensure the label is sanitized and rendered
+    expect(DOMPurify.sanitize).toHaveBeenCalledWith(`<div>${mockProps.data.rwb_label_name}</div>`);
+    expect(screen.getByText("Test Label")).toBeInTheDocument();
+
+    // Ensure the info icon is rendered
+    expect(screen.getByClassName("info__icon")).toBeInTheDocument();
+
+    // Ensure the tool-tip icon is not rendered by default
+    expect(screen.queryByClassName("tool-tip__icon")).not.toBeInTheDocument();
+  });
+
+  test("renders tool-tip icon when conditions are met", () => {
+    render(<Information {...mockProps} />);
+
+    // Simulate condition for the tool-tip icon
+    const tooltip = screen.queryByClassName("tool-tip");
+    expect(tooltip).not.toBeInTheDocument();
+
+    // Simulate clicking the tool-tip icon
+    fireEvent.click(tooltip);
+    expect(screen.getByClassName("tool-tip__icon")).toBeInTheDocument();
+  });
+
+  test("opens and closes the popup when tool-tip icon is clicked", () => {
+    render(<Information {...mockProps} />);
+
+    // Simulate clicking the tool-tip icon
+    fireEvent.click(screen.getByClassName("tool-tip"));
+    expect(screen.getByClassName("model")).toBeInTheDocument();
+
+    // Close the popup
+    fireEvent.click(screen.getByText("Back")); // Assuming "Back" is a button to close the popup
+    expect(screen.queryByClassName("model")).not.toBeInTheDocument();
+  });
+
+  test("renders the correct class based on props and state", () => {
+    render(<Information {...mockProps} />);
+
+    const container = screen.getByClassName("info");
+    expect(container).toHaveClass("show-info, info-top");
+
+    // Simulate logical_field_name mismatch
+    const newProps = {
+      ...mockProps,
+      data: { ...mockProps.data, logical_field_name: "some_other_field" },
+    };
+    render(<Information {...newProps} />);
+    expect(container).toHaveClass("hide-info");
+  });
+});
 
 
