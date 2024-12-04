@@ -4363,6 +4363,17 @@ describe("ThankYou Component Testing", () => {
   // Additional tests can follow the same pattern
 });
 // Reorder props before rendering
+
+
+export const fieldError = (fieldErrorSelector: any, props: KeyWithAnyModel) => {
+  debugger
+  if (fieldErrorSelector) {
+    if (Object.keys(fieldErrorSelector).length > 0) {
+      return fieldErrorSelector.hasOwnProperty(props.data.logical_field_name);
+    }
+  }
+};
+
 const reorderedData = [
   ...props.data
 ].sort((a, b) => {
