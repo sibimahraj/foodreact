@@ -4759,4 +4759,25 @@ it("should set showInfoPopup to true when tooltip icon is clicked", () => {
   expect(screen.getByTestId('model')).toBeInTheDocument();
 });
 
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+
+const useFieldErrorSelector = () => {
+  const fieldError = useSelector((state: StoreModel) => state.fielderror.error); // Original selector
+  const [enhancedFieldError, setEnhancedFieldError] = useState(fieldError);
+
+  useEffect(() => {
+    // Enhance the fieldError only when it's missing the required field
+    if (fieldError && !fieldError.missingField) {
+      setEnhancedFieldError({
+        ...fieldError,
+        missingField: "defaultValue", // Add your required default value
+      });
+    } else {
+      setEnhancedFieldError(fieldError);
+    }
+  }, [fieldError]); // Runs only when `fieldError` changes
+
+  return enhancedFieldError;
+};
 
