@@ -6310,4 +6310,39 @@ export const fieldErrorAction = fieldError.actions;
 
 export default fieldError;
 
+else if (regex.indexOf('a-z') > -1) {
+                scope.invalidLabel = scope.labelName + ' can only contain text';
+                if (regex.indexOf('0-9') > -1) {
+                  scope.invalidLabel = scope.labelName + ' can only contain alphanumeric';
+                }
+                if (regex.indexOf('()') > -1) {
+                  scope.invalidLabel = scope.labelName + ' can only contain non-numerics';
+                }
+              } 
+
+               if (!scope.rtoForm.textbox.$error.required) {
+            if (text && scope.rtoForm.textbox.$error.pattern) {
+              if (text[0] == ' ' || text[text.length - 1] == ' ') {
+                scope.invalidLabel = scope.labelName + ' cannot have leading or trailing spaces';
+                smallText = true;
+              } else if (regex.indexOf('a-z') > -1) {
+                scope.invalidLabel = scope.labelName + ' can only contain text';
+                if (regex.indexOf('0-9') > -1) {
+                  scope.invalidLabel = scope.labelName + ' can only contain alphanumeric';
+                }
+                if (regex.indexOf('()') > -1) {
+                  scope.invalidLabel = scope.labelName + ' can only contain non-numerics';
+                }
+              } else if (regex.indexOf('0-9') > -1) {
+                scope.invalidLabel = scope.labelName + ' can only contain numbers 0 to 9';
+              }
+            } else if ((scope.logicalid == 'full_name' || scope.logicalid == 'alias') && count > 1) {
+              scope.invalidLabel = scope.labelName + ' can only contain 1 @';
+              scope.rtoForm.textbox.$setValidity("textbox", false);
+            } else if (scope.rtoForm.textbox.$invalid) {
+              scope.invalidLabel = (scope.logicalid === 'reenter_email') ? 'Re-enter Email does not match with Email' : 'Please enter a valid ' + attrs.labelname;
+            } else {
+              scope.invalidLabel = '';
+            }
+          }
 
