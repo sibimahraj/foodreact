@@ -6346,3 +6346,55 @@ else if (regex.indexOf('a-z') > -1) {
             }
           }
 
+
+
+import React, { useState } from "react";
+
+const InputField = (props) => {
+    const [error, setError] = useState(""); // For error messages
+    const [value, setValue] = useState(""); // For input value
+
+    const regex = /^[a-zA-Z0-9]*$/; // Alphanumeric regex
+    const handleInputChange = (event) => {
+        let errorMessage = ""; // Temporary error message
+
+        // Check for leading or trailing spaces
+        if (event.target.value[0] === " " || event.target.value[event.target.value.length - 1] === " ") {
+            errorMessage = `${props.labelName} cannot have leading or trailing spaces`;
+        }
+        // Check for pattern match
+        else if (!regex.test(event.target.value)) {
+            if (/[a-z]/.test(event.target.value) && /\d/.test(event.target.value)) {
+                errorMessage = `${props.labelName} can only contain alphanumeric characters`;
+            } else if (/[a-z]/.test(event.target.value)) {
+                errorMessage = `${props.labelName} can only contain text`;
+            } else if (/\d/.test(event.target.value)) {
+                errorMessage = `${props.labelName} can only contain numbers`;
+            } else {
+                errorMessage = `${props.labelName} contains invalid characters`;
+            }
+        }
+        // No error, clear the message
+        else {
+            errorMessage = "";
+        }
+
+        setError(errorMessage); // Update the error state
+        setValue(event.target.value); // Update the input value
+    };
+
+    return (
+        <div>
+            <label>{props.labelName}</label>
+            <input
+                type="text"
+                value={value}
+                onChange={handleInputChange}
+                placeholder={props.placeholder}
+            />
+            {error && <p className="error">{error}</p>}
+        </div>
+    );
+};
+
+export default InputField;
