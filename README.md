@@ -243,3 +243,42 @@ describe('Rules_bd_2', () => {
     });
   });
 });
+
+import { getUrl } from '../../utils/common/change.utils';
+import { KeyWithAnyModel, ValidationObjModel } from '../../utils/model/common-model';
+import rulesUtils from './rules.utils';
+
+const Rules_bd_3 = (props: KeyWithAnyModel, stageInfo: KeyWithAnyModel): KeyWithAnyModel => {
+    const validationObj: ValidationObjModel = {
+        nonEditable: [],
+        hidden: []
+    };
+    let nonEditableFields: Array<string> = [];
+    let hiddenFields: Array<string> = [];
+    if((stageInfo.products[0].product_category === "CC" || stageInfo.products[0].product_category === "PL")){
+        if(stageInfo.application.journey_type === 'NTC'){
+            if(!stageInfo.applicants["year_of_assessment_fff_1_a_1"]){
+                hiddenFields.push("year_of_assessment_fff_1");
+            }
+            if(!stageInfo.applicants["annual_income_fff_1_a_1"]){
+                hiddenFields.push("annual_income_fff_1");
+            }
+            if(!stageInfo.applicants["mailing_address_a_1"]){
+                hiddenFields.push("mailing_address");
+            }
+            nonEditableFields.push("annual_income_fff_1","year_of_assessment_fff_1","residential_address","mailing_address");
+        }
+    }
+    if (getUrl.getJourneyType() === "ETC") {
+        hiddenFields.push("work_type","name_of_employer","name_of_employer_other","name_of_business","job_title","embossed_name","annual_income_fff_1","year_of_assessment_fff_1","residential_address","mailing_address");
+    }
+    else{
+        hiddenFields.push("credit_limit_consent","myinfo_data_cli","embossed_name");
+      }
+    validationObj.nonEditable.push(nonEditableFields);
+    validationObj.hidden!.push(hiddenFields);
+    return rulesUtils(props, validationObj);
+}
+
+export default Rules_bd_3;
+
