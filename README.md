@@ -681,3 +681,110 @@ const RulesSSFTwo = (
 
 export default RulesSSFTwo;
 
+import RulesSSFTwo from './rules_ssf_two';
+import { getUrl, filterDisableFields } from '../../utils/common/change.utils';
+import rulesUtils from './rules.utils';
+
+// Mock the dependencies
+jest.mock('../../utils/common/change.utils', () => ({
+  getUrl: {
+    getJourneyType: jest.fn(),
+  },
+  filterDisableFields: jest.fn(),
+}));
+
+jest.mock('./rules.utils', () => jest.fn());
+
+describe('RulesSSFTwo', () => {
+  const mockProps = [
+    { fields: [{ logical_field_name: 'field1' }, { logical_field_name: 'field2' }] },
+  ];
+  const mockStages = {
+    application: {
+      source_system_name: '3',
+    },
+    applicants: {
+      residency_status_a_1: 'FR',
+      year_of_assessment_fff_1_a_1: false,
+      annual_income_fff_1_a_1: false,
+      NRIC_a_1: true,
+      date_of_birth_a_1: true,
+    },
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should handle source_system_name as 3 and residency_status as FR', () => {
+    const mockMyinfoMissingFields = ['mobile_number', 'email'];
+    (filterDisableFields as jest.Mock).mockReturnValue(['field1', 'field2']);
+
+    const expectedValidationObj = {
+      nonEditable: [['NRIC', 'date_of_birth', 'field1', 'field2']],
+      hidden: [['NRIC', 'year_of_assessment_fff_1', 'annual_income_fff_1', 'passport_no', 'pass_exp_date']],
+    };
+
+    const result = RulesSSFTwo(mockProps, mockStages, mockMyinfoMissingFields);
+
+    expect(filterDisableFields).toHaveBeenCalled();
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, expectedValidationObj);
+    expect(result).toEqual(expectedValidationObj);
+  });
+
+  it('should handle source_system_name as 3 and non-FR residency_status', () => {
+    const mockStagesNonFR = {
+      ...mockStages,
+      applicants: {
+        ...mockStages.applicants,
+        residency_status_a_1: 'NON-FR',
+      },
+    };
+    const mockMyinfoMissingFields = [];
+    (filterDisableFields as jest.Mock).mockReturnValue(['field3', 'field4']);
+
+    const expectedValidationObj = {
+      nonEditable: [['NRIC', 'date_of_birth', 'field3', 'field4']],
+      hidden: [['FIN', 'passport_no', 'pass_exp_date', 'year_of_assessment_fff_1', 'annual_income_fff_1']],
+    };
+
+    const result = RulesSSFTwo(mockProps, mockStagesNonFR, mockMyinfoMissingFields);
+
+    expect(filterDisableFields).toHaveBeenCalled();
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, expectedValidationObj);
+    expect(result).toEqual(expectedValidationObj);
+  });
+
+  it('should handle when journey type is set', () => {
+    (getUrl.getJourneyType as jest.Mock).mockReturnValue(true);
+    (filterDisableFields as jest.Mock).mockReturnValue(['field5', 'field6']);
+
+    const expectedValidationObj = {
+      nonEditable: [['NRIC', 'date_of_birth', 'field5', 'field6']],
+      hidden: [['NRIC', 'year_of_assessment_fff_1', 'annual_income_fff_1']],
+    };
+
+    const result = RulesSSFTwo(mockProps, mockStages);
+
+    expect(filterDisableFields).toHaveBeenCalled();
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, expectedValidationObj);
+    expect(result).toEqual(expectedValidationObj);
+  });
+
+  it('should handle missing myinfo fields and default editable fields', () => {
+    const mockMyinfoMissingFields = [];
+    (filterDisableFields as jest.Mock).mockReturnValue(['field7', 'field8']);
+
+    const expectedValidationObj = {
+      nonEditable: [['NRIC', 'date_of_birth', 'field7', 'field8']],
+      hidden: [['NRIC', 'year_of_assessment_fff_1', 'annual_income_fff_1', 'passport_no', 'pass_exp_date']],
+    };
+
+    const result = RulesSSFTwo(mockProps, mockStages, mockMyinfoMissingFields);
+
+    expect(filterDisableFields).toHaveBeenCalled();
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, expectedValidationObj);
+    expect(result).toEqual(expectedValidationObj);
+  });
+});
+
