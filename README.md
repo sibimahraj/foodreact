@@ -157,3 +157,89 @@ describe('Rules_bd_2', () => {
     expect(rulesUtils).toHaveBeenCalled();
   });
 });
+import Rules_bd_2 from './rules_bd-2';
+import { getUrl } from '../../utils/common/change.utils';
+import { checkProductDetails } from '../../services/common-service';
+import rulesUtils from './rules.utils';
+
+// Mock the dependencies
+jest.mock('../../utils/common/change.utils', () => ({
+  getUrl: {
+    getParameterByName: jest.fn(),
+  },
+}));
+
+jest.mock('../../services/common-service', () => ({
+  checkProductDetails: jest.fn(),
+}));
+
+jest.mock('./rules.utils', () => jest.fn());
+
+describe('Rules_bd_2', () => {
+  const mockProps = { someProp: 'value' };
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should hide nationality_add if not a CASA product and residency_status_a_1 is FR', () => {
+    // Mock return values
+    (getUrl.getParameterByName as jest.Mock).mockReturnValue('manual');
+    (checkProductDetails as jest.Mock).mockReturnValue(false);
+
+    const mockStageInfo = {
+      products: ['product1'],
+      applicants: {
+        residency_status_a_1: 'FR',
+      },
+    };
+
+    Rules_bd_2(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [],
+      hidden: [['postal_code_other', 'nationality_add']],
+      modifyVisibility: [['overseas_contact_country_code', 'overseas_contact_area_code', 'overseas_contact_no']],
+    });
+  });
+
+  it('should not include nationality_add if it is a CASA product', () => {
+    (getUrl.getParameterByName as jest.Mock).mockReturnValue('manual');
+    (checkProductDetails as jest.Mock).mockReturnValue(true);
+
+    const mockStageInfo = {
+      products: ['CASA_Product'],
+      applicants: {
+        residency_status_a_1: 'FR',
+      },
+    };
+
+    Rules_bd_2(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [],
+      hidden: [['postal_code_other']],
+      modifyVisibility: [['overseas_contact_country_code', 'overseas_contact_area_code', 'overseas_contact_no']],
+    });
+  });
+
+  it('should not modify visibility if residency_status_a_1 is not FR', () => {
+    (getUrl.getParameterByName as jest.Mock).mockReturnValue('manual');
+    (checkProductDetails as jest.Mock).mockReturnValue(false);
+
+    const mockStageInfo = {
+      products: ['product1'],
+      applicants: {
+        residency_status_a_1: 'NON-FR',
+      },
+    };
+
+    Rules_bd_2(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [],
+      hidden: [['postal_code_other', 'nationality_add']],
+      modifyVisibility: [],
+    });
+  });
+});
