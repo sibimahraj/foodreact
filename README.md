@@ -787,4 +787,235 @@ describe('RulesSSFTwo', () => {
     expect(result).toEqual(expectedValidationObj);
   });
 });
+import { AppDispatch } from "../../../services/common-service";
+import { FindIndex } from "../../../utils/common/change.utils";
+import {
+  KeyWithAnyModel,
+  StageDetails,
+  aliasStoreModel
+} from "../../../utils/model/common-model";
+import { fieldErrorAction } from "../../../utils/store/field-error-slice";
+import { stagesAction } from "../../../utils/store/stages-slice";
+import { aliasAction } from "../../../utils/store/alias-slice";
+import { getUrl } from "../../../utils/common/change.utils";
+
+export const getFields = (
+  getStages: Array<StageDetails>,
+  aliasSelector: aliasStoreModel,
+  action: string
+): any => {
+  return (dispatch: AppDispatch) => {
+    const stageId = getStages[0].stageId === "ssf-1" ? "ssf-2" : getStages[0].stageId;
+    const stageIndex = FindIndex(getStages[0].stageInfo, stageId);
+    let fields: Array<KeyWithAnyModel> | undefined = getStages[0].stageInfo.fieldMetaData.data.stages[stageIndex].fields;
+    let newFileds: Array<KeyWithAnyModel> = [];
+    let newFieldsArray: Array<string> = [];
+    const journeyType = getUrl.getJourneyType();
+
+    let getClonedField = (logical_field_name: string) => {
+      if (fields) {
+        let field = fields.find(
+          fieldData => fieldData.logical_field_name === logical_field_name
+        );
+        if (field && field.logical_field_name) {
+          return { ...field };
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    };
+
+    const getSequence = () => {
+      for (let i = 1; i <= aliasSelector.maxCount; i++) {
+        let isItemFound = false;
+        aliasSelector.fields.forEach((field: string) => {
+          if (field && field.split("_")[1] === i.toString()) {
+            isItemFound = true;
+          }
+        });
+        if (!isItemFound) {
+          return i;
+        }
+      }
+    };
+
+    aliasSelector.fields.forEach((field: string) => {
+      let alias = getClonedField("alias");
+      if (field && alias) {
+        alias.logical_field_name = field;
+        alias.component_type = "Text";
+        alias.rwb_label_name = alias.rwb_label_name +' '+ field.split('_')[1];
+        if (journeyType) {
+          alias.hide_remove_btn = true;
+        }
+        newFileds.push(alias);
+        newFieldsArray.push(alias.logical_field_name);
+      }
+    });
+
+    if (newFieldsArray.length > 0) {
+      dispatch(fieldErrorAction.getMandatoryFields(newFieldsArray));
+      dispatch(
+        stagesAction.removeAddToggleField({
+          removeFields: [],
+          newFields: newFieldsArray,
+          value: ""
+        })
+      );
+    }
+
+    if (aliasSelector.count < aliasSelector.maxCount && action === "add") {
+      dispatch(aliasAction.updateCount(aliasSelector.count + 1));
+      let alias = getClonedField("alias");
+      if (alias) {
+        const seqNo = getSequence();
+        alias.logical_field_name = "alias_" + seqNo;
+        alias.component_type = "Text";
+        alias.rwb_label_name = alias.rwb_label_name +' '+ seqNo;
+        newFileds.push(alias);
+        dispatch(fieldErrorAction.getMandatoryFields([alias.logical_field_name]));
+        dispatch(aliasAction.addAliasField(alias.logical_field_name));
+        dispatch(
+          stagesAction.removeAddToggleField({
+            removeFields: [],
+            newFields: [alias.logical_field_name],
+            value: ""
+          })
+        );
+      }
+    }
+    return newFileds;
+  };
+};
+import { getFields } from "./alias.utils";
+import { fieldErrorAction } from "../../../utils/store/field-error-slice";
+import { stagesAction } from "../../../utils/store/stages-slice";
+import { aliasAction } from "../../../utils/store/alias-slice";
+import { getUrl } from "../../../utils/common/change.utils";
+ 
+jest.mock("../../../utils/store/field-error-slice", () => ({
+  fieldErrorAction: {
+    getMandatoryFields: jest.fn(),
+  },
+}));
+ 
+jest.mock("../../../utils/store/stages-slice", () => ({
+  stagesAction: {
+    removeAddToggleField: jest.fn(),
+  },
+}));
+ 
+jest.mock("../../../utils/store/alias-slice", () => ({
+  aliasAction: {
+    updateCount: jest.fn(),
+    addAliasField: jest.fn(),
+  },
+}));
+ 
+jest.mock("../../../utils/common/change.utils", () => ({
+  FindIndex: jest.fn(() => 0),
+  getUrl: {
+    getJourneyType: jest.fn(() => true),
+  },
+}));
+ 
+describe("getFields", () => {
+  const mockDispatch = jest.fn();
+  const mockGetStages = [
+    {
+      stageId: "ssf-1",
+      stageInfo: {
+        fieldmetadata: {
+          data: {
+            stages: [{
+              stageId:'bd-2',
+                fields: [
+                  {
+                    logical_field_name: "alias",
+                    component_type: "Text",
+                    rwb_label_name: "Alias",
+                  },
+                ],
+              }],
+          },
+        },
+      },
+    },
+  ];
+  const mockAliasSelector = {
+    fields: ["alias_1", "alias_2"],
+    count: 2,
+    maxCount: 5,
+  };
+ 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+ 
+  it("should return newFields and dispatch actions correctly when action is 'add'", () => {
+    const action = "add";
+    const result = getFields(mockGetStages, mockAliasSelector, action)(mockDispatch);
+ 
+    expect(result).toHaveLength(3); // 2 existing aliases + 1 new alias
+    expect(fieldErrorAction.getMandatoryFields).toHaveBeenCalledTimes(2);
+    expect(stagesAction.removeAddToggleField).toHaveBeenCalledTimes(2);
+    expect(aliasAction.updateCount).toHaveBeenCalledWith(3); // Increment count
+    expect(aliasAction.addAliasField).toHaveBeenCalledWith("alias_3");
+    expect(mockDispatch).toHaveBeenCalledTimes(6); // Dispatch actions
+  });
+ 
+  it("should return newFields and dispatch actions correctly when action is not 'add'", () => {
+    const action = "remove";
+    const result = getFields(mockGetStages, mockAliasSelector, action)(mockDispatch);
+ 
+    expect(result).toHaveLength(2); // Only existing aliases
+    expect(fieldErrorAction.getMandatoryFields).toHaveBeenCalledTimes(1);
+    expect(stagesAction.removeAddToggleField).toHaveBeenCalledTimes(1);
+    expect(aliasAction.updateCount).not.toHaveBeenCalled(); // Count should not be updated
+    expect(aliasAction.addAliasField).not.toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledTimes(2); // Dispatch actions
+  });
+ 
+  it("should handle missing fields gracefully", () => {
+    const mockGetStagesWithMissingFields = [
+      {
+        stageId: "ssf-1",
+        stageInfo: {
+          fieldmetadata: {
+            data: {
+              stages: [{
+                stageId:'bd-2',
+                  fields: [],
+                }],
+            },
+          },
+        },
+      },
+    ];
+    const action = "add";
+    const result = getFields(mockGetStagesWithMissingFields, mockAliasSelector, action)(mockDispatch);
+ 
+ 
+  });
+ 
+  it("should handle empty aliasSelector fields gracefully", () => {
+    const mockAliasSelectorEmptyFields = {
+      fields: [],
+      count: 0,
+      maxCount: 5,
+    };
+    const action = "add";
+    const result = getFields(mockGetStages, mockAliasSelectorEmptyFields, action)(mockDispatch);
+ 
+    expect(result).toHaveLength(1); // Only new alias added
+    expect(fieldErrorAction.getMandatoryFields).toHaveBeenCalledTimes(1);
+    expect(stagesAction.removeAddToggleField).toHaveBeenCalledTimes(1);
+    expect(aliasAction.updateCount).toHaveBeenCalledWith(1); // Increment count
+    expect(aliasAction.addAliasField).toHaveBeenCalledWith("alias_1");
+    expect(mockDispatch).toHaveBeenCalledTimes(4); // Dispatch actions
+  });
+});
+ 
 
