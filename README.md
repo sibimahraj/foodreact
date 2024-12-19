@@ -474,3 +474,130 @@ const RulesSSF = (
 };
 
 export default RulesSSF;
+import RulesSSF from './rulesSSF';
+import { filterDisableFields, getUrl } from "../../utils/common/change.utils";
+import rulesUtils from "./rules.utils";
+
+// Mock the dependencies
+jest.mock("../../utils/common/change.utils", () => ({
+  filterDisableFields: jest.fn(),
+  getUrl: {
+    getParameterByName: jest.fn(),
+  },
+}));
+
+jest.mock("./rules.utils", () => jest.fn());
+
+describe('RulesSSF', () => {
+  const mockProps = [
+    {
+      fields: [{ logical_field_name: 'field1' }, { logical_field_name: 'field2' }],
+    },
+  ];
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should handle MyInfo virtual or auth case for non-CA/SA products', () => {
+    const mockStageInfo = {
+      application: { source_system_name: '3' },
+      products: [{ product_category: 'CC' }],
+      applicants: { mobile_number_a_1: null, email_a_1: null },
+    };
+
+    (getUrl.getParameterByName as jest.Mock).mockImplementation((param) => {
+      if (param === "auth") return "myinfo";
+      if (param === "isMyInfoVirtual") return "true";
+      return null;
+    });
+
+    (filterDisableFields as jest.Mock).mockReturnValue(['mobile_number', 'email']);
+
+    RulesSSF(mockProps, mockStageInfo);
+
+    expect(filterDisableFields).toHaveBeenCalledWith(
+      mockProps[0].fields,
+      ['ownership_status', 'mobile_number', 'email'],
+      ['email', 'mobile_number']
+    );
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [['mobile_number', 'email']],
+      hidden: [['contact_preference_casa_etc']],
+      modifyVisibility: [],
+    });
+  });
+
+  it('should handle auth_mode IX case with ibanking fields', () => {
+    const mockStageInfo = {
+      application: {},
+      products: [],
+      applicants: {
+        auth_mode_a_1: 'IX',
+        mobile_number_a_1: true,
+        email_a_1: true,
+        account_currency_9_a_1: false,
+        account_currency_a_1: true,
+      },
+    };
+
+    RulesSSF(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [['full_name', 'mobile_number', 'email', 'account_currency']],
+      hidden: [[/* Hidden fields that are not in ibankingFields */]],
+      modifyVisibility: [],
+    });
+  });
+
+  it('should handle manual authentication case', () => {
+    const mockStageInfo = {
+      application: {},
+      products: [],
+      applicants: {},
+    };
+
+    (getUrl.getParameterByName as jest.Mock).mockReturnValue("manual");
+
+    RulesSSF(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [],
+      hidden: [
+        [
+          "ownership_status",
+          "residential_address",
+          "see_other_myInfo_details",
+          "see_other_myInfo_details_consent",
+          "contact_preference_casa_etc",
+          "residential_address_consent_a_1",
+        ],
+      ],
+      modifyVisibility: [["date_of_birth", "residency_status"]],
+    });
+  });
+
+  it('should handle default case with no specific auth or virtual flag', () => {
+    const mockStageInfo = {
+      application: {},
+      products: [],
+      applicants: {},
+    };
+
+    (getUrl.getParameterByName as jest.Mock).mockReturnValue(null);
+
+    RulesSSF(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [],
+      hidden: [
+        [
+          "see_other_myInfo_details",
+          "see_other_myInfo_details_consent",
+          "contact_preference_casa_etc",
+        ],
+      ],
+      modifyVisibility: [],
+    });
+  });
+});
