@@ -1164,4 +1164,138 @@ describe("getFields", () => {
     expect(mockDispatch).toHaveBeenCalledTimes(4); // Dispatch actions
   });
 });
+import { getFields } from "./alias.utils";
+import { fieldErrorAction } from "../../../utils/store/field-error-slice";
+import { stagesAction } from "../../../utils/store/stages-slice";
+import { aliasAction } from "../../../utils/store/alias-slice";
+import { getUrl } from "../../../utils/common/change.utils";
 
+jest.mock("../../../utils/store/field-error-slice", () => ({
+  fieldErrorAction: {
+    getMandatoryFields: jest.fn(),
+  },
+}));
+
+jest.mock("../../../utils/store/stages-slice", () => ({
+  stagesAction: {
+    removeAddToggleField: jest.fn(),
+  },
+}));
+
+jest.mock("../../../utils/store/alias-slice", () => ({
+  aliasAction: {
+    updateCount: jest.fn(),
+    addAliasField: jest.fn(),
+  },
+}));
+
+jest.mock("../../../utils/common/change.utils", () => ({
+  FindIndex: jest.fn((stageInfo, stageId) => {
+    return stageInfo.findIndex((stage) => stage.stageId === stageId);
+  }),
+  getUrl: {
+    getJourneyType: jest.fn(() => true),
+  },
+}));
+
+describe("getFields", () => {
+  const mockDispatch = jest.fn();
+  const mockGetStages = [
+    {
+      stageId: "ssf-1",
+      stageInfo: {
+        fieldMetaData: {
+          data: {
+            stages: [
+              {
+                stageId: "ssf-2",
+                fields: [
+                  {
+                    logical_field_name: "alias",
+                    component_type: "Text",
+                    rwb_label_name: "Alias",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    },
+  ];
+  const mockAliasSelector = {
+    fields: ["alias_1", "alias_2"],
+    count: 2,
+    maxCount: 5,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should return newFields and dispatch actions correctly when action is 'add'", () => {
+    const action = "add";
+    const result = getFields(mockGetStages, mockAliasSelector, action)(mockDispatch);
+
+    expect(result).toHaveLength(3); // 2 existing aliases + 1 new alias
+    expect(fieldErrorAction.getMandatoryFields).toHaveBeenCalledTimes(2);
+    expect(stagesAction.removeAddToggleField).toHaveBeenCalledTimes(2);
+    expect(aliasAction.updateCount).toHaveBeenCalledWith(3); // Increment count
+    expect(aliasAction.addAliasField).toHaveBeenCalledWith("alias_3");
+    expect(mockDispatch).toHaveBeenCalledTimes(6); // Dispatch actions
+  });
+
+  it("should return newFields and dispatch actions correctly when action is not 'add'", () => {
+    const action = "remove";
+    const result = getFields(mockGetStages, mockAliasSelector, action)(mockDispatch);
+
+    expect(result).toHaveLength(2); // Only existing aliases
+    expect(fieldErrorAction.getMandatoryFields).toHaveBeenCalledTimes(1);
+    expect(stagesAction.removeAddToggleField).toHaveBeenCalledTimes(1);
+    expect(aliasAction.updateCount).not.toHaveBeenCalled(); // Count should not be updated
+    expect(aliasAction.addAliasField).not.toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledTimes(2); // Dispatch actions
+  });
+
+  it("should handle missing fields gracefully", () => {
+    const mockGetStagesWithMissingFields = [
+      {
+        stageId: "ssf-1",
+        stageInfo: {
+          fieldMetaData: {
+            data: {
+              stages: [
+                {
+                  stageId: "ssf-2",
+                  fields: [],
+                },
+              ],
+            },
+          },
+        },
+      },
+    ];
+    const action = "add";
+    const result = getFields(mockGetStagesWithMissingFields, mockAliasSelector, action)(mockDispatch);
+
+    expect(result).toHaveLength(0); // No fields to add
+    expect(mockDispatch).not.toHaveBeenCalled(); // No actions dispatched
+  });
+
+  it("should handle empty aliasSelector fields gracefully", () => {
+    const mockAliasSelectorEmptyFields = {
+      fields: [],
+      count: 0,
+      maxCount: 5,
+    };
+    const action = "add";
+    const result = getFields(mockGetStages, mockAliasSelectorEmptyFields, action)(mockDispatch);
+
+    expect(result).toHaveLength(1); // Only new alias added
+    expect(fieldErrorAction.getMandatoryFields).toHaveBeenCalledTimes(1);
+    expect(stagesAction.removeAddToggleField).toHaveBeenCalledTimes(1);
+    expect(aliasAction.updateCount).toHaveBeenCalledWith(1); // Increment count
+    expect(aliasAction.addAliasField).toHaveBeenCalledWith("alias_1");
+    expect(mockDispatch).toHaveBeenCalledTimes(4); // Dispatch actions
+  });
+});
