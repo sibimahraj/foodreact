@@ -281,4 +281,98 @@ const Rules_bd_3 = (props: KeyWithAnyModel, stageInfo: KeyWithAnyModel): KeyWith
 }
 
 export default Rules_bd_3;
+import Rules_bd_3 from './rules_bd-3';
+import { getUrl } from '../../utils/common/change.utils';
+import rulesUtils from './rules.utils';
+
+// Mock the dependencies
+jest.mock('../../utils/common/change.utils', () => ({
+  getUrl: {
+    getJourneyType: jest.fn(),
+  },
+}));
+
+jest.mock('./rules.utils', () => jest.fn());
+
+describe('Rules_bd_3', () => {
+  const mockProps = { someProp: 'value' };
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should handle CC or PL product category and NTC journey type', () => {
+    const mockStageInfo = {
+      products: [{ product_category: 'CC' }],
+      application: { journey_type: 'NTC' },
+      applicants: {
+        year_of_assessment_fff_1_a_1: null,
+        annual_income_fff_1_a_1: null,
+        mailing_address_a_1: null,
+      },
+    };
+
+    (getUrl.getJourneyType as jest.Mock).mockReturnValue('OTHER');
+
+    Rules_bd_3(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [
+        ['annual_income_fff_1', 'year_of_assessment_fff_1', 'residential_address', 'mailing_address'],
+      ],
+      hidden: [
+        ['year_of_assessment_fff_1', 'annual_income_fff_1', 'mailing_address', 'credit_limit_consent', 'myinfo_data_cli', 'embossed_name'],
+      ],
+    });
+  });
+
+  it('should handle ETC journey type', () => {
+    const mockStageInfo = {
+      products: [{ product_category: 'PL' }],
+      application: { journey_type: 'OTHER' },
+      applicants: {},
+    };
+
+    (getUrl.getJourneyType as jest.Mock).mockReturnValue('ETC');
+
+    Rules_bd_3(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [[]],
+      hidden: [
+        [
+          'work_type',
+          'name_of_employer',
+          'name_of_employer_other',
+          'name_of_business',
+          'job_title',
+          'embossed_name',
+          'annual_income_fff_1',
+          'year_of_assessment_fff_1',
+          'residential_address',
+          'mailing_address',
+        ],
+      ],
+    });
+  });
+
+  it('should not hide fields for non-CC/PL product categories', () => {
+    const mockStageInfo = {
+      products: [{ product_category: 'OTHER' }],
+      application: { journey_type: 'NTC' },
+      applicants: {},
+    };
+
+    (getUrl.getJourneyType as jest.Mock).mockReturnValue('OTHER');
+
+    Rules_bd_3(mockProps, mockStageInfo);
+
+    expect(rulesUtils).toHaveBeenCalledWith(mockProps, {
+      nonEditable: [[]],
+      hidden: [
+        ['credit_limit_consent', 'myinfo_data_cli', 'embossed_name'],
+      ],
+    });
+  });
+});
 
