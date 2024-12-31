@@ -373,6 +373,22 @@ TypeError: props.handleFieldDispatch is not a function
       18 |
  Actions must be plain objects. Use custom middleware for async actions.
 
+  Date Component › should handle focus events
+
+    expect(jest.fn()).toHaveBeenCalled()
+
+    Expected number of calls: >= 1
+    Received number of calls:    0
+
+      139 |     fireEvent.focus(dayInput);
+      140 |
+    > 141 |     expect(validateService.allowOnlyCharacter).toHaveBeenCalled();
+          |                                                ^
+      142 |   });
+      143 |
+      144 |   it("should auto-bind a single digit to a two-digit format for DD/MM", () => {
+
+
       122 |     event: React.FocusEvent<HTMLInputElement>
       123 |   ) => {
     > 124 |     dispatch(lastAction.getField(fieldName));
