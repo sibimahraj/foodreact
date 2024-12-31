@@ -201,3 +201,135 @@ const Amount = (props: KeyWithAnyModel) => {
 };
 
 export default Amount;
+
+import React from "react";
+import { render, fireEvent } from "@testing-library/react";
+import { useSelector, useDispatch } from "react-redux";
+import Amount from "./amount";
+import validateService from "../../../services/validation-service";
+import loanDetailsConst from "../../../assets/_json/loan-details.json";
+
+jest.mock("react-redux", () => ({
+  useSelector: jest.fn(),
+  useDispatch: jest.fn(),
+}));
+
+jest.mock("../../../services/validation-service", () => ({
+  allowOnlyCharacter: jest.fn(),
+}));
+
+jest.mock("../../../utils/common/change.utils", () => ({
+  fieldIdAppend: jest.fn(() => "mock-field-id"),
+  isFieldUpdate: jest.fn(),
+  isFieldValueUpdate: jest.fn(),
+  getUrl: {
+    getUpdatedStage: jest.fn(() => ({
+      updatedStageInputs: [
+        {
+          stageId: "mock-stage-id",
+          applicants: { "mock-field-id": "1000" },
+        },
+      ],
+    })),
+  },
+  fieldError: jest.fn(),
+}));
+
+describe("Amount Component", () => {
+  const mockDispatch = jest.fn();
+  const mockHandleCallback = jest.fn();
+
+  beforeEach(() => {
+    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.name === "stateSelector") {
+        return {
+          stages: [
+            {
+              stageInfo: {
+                applicants: { mock_field_name: "1000" },
+              },
+            },
+          ],
+        };
+      }
+      return {};
+    });
+    jest.clearAllMocks();
+  });
+
+  const mockProps = {
+    data: {
+      logical_field_name: "required_annual_income",
+      rwb_label_name: "Annual Income",
+      type: "text",
+      length: 10,
+      min_length: 3,
+    },
+    handleCallback: mockHandleCallback,
+  };
+
+  it("renders without errors", () => {
+    const { getByLabelText } = render(<Amount {...mockProps} />);
+    const inputElement = getByLabelText("required_annual_income");
+    expect(inputElement).toBeInTheDocument();
+  });
+
+  it("handles input change for valid income", () => {
+    const { getByLabelText } = render(<Amount {...mockProps} />);
+    const inputElement = getByLabelText("required_annual_income");
+    fireEvent.change(inputElement, { target: { value: "50000" } });
+
+    expect(mockHandleCallback).toHaveBeenCalledWith(
+      mockProps.data,
+      "50000"
+    );
+    expect(mockDispatch).toHaveBeenCalled();
+  });
+
+  it("sets error for income less than minimum", () => {
+    const { getByLabelText, getByText } = render(<Amount {...mockProps} />);
+    const inputElement = getByLabelText("required_annual_income");
+    fireEvent.change(inputElement, { target: { value: "2000" } });
+
+    expect(mockHandleCallback).toHaveBeenCalledWith(mockProps.data, "");
+    expect(getByText("Please enter Annual Income")).toBeInTheDocument();
+  });
+
+  it("formats currency on blur", () => {
+    const { getByLabelText } = render(<Amount {...mockProps} />);
+    const inputElement = getByLabelText("required_annual_income");
+    fireEvent.blur(inputElement, { target: { value: "20000" } });
+
+    expect(inputElement.value).toBe("20,000");
+  });
+
+  it("calls allowOnlyCharacter on key press", () => {
+    const { getByLabelText } = render(<Amount {...mockProps} />);
+    const inputElement = getByLabelText("required_annual_income");
+    fireEvent.keyPress(inputElement, { key: "a" });
+
+    expect(validateService.allowOnlyCharacter).toHaveBeenCalled();
+  });
+
+  it("sets default value from stage selector", () => {
+    (useSelector as jest.Mock).mockImplementation((selectorFn) => {
+      if (selectorFn.name === "stateSelector") {
+        return {
+          stages: [
+            {
+              stageInfo: {
+                applicants: { mock_field_name: "5000" },
+              },
+            },
+          ],
+        };
+      }
+      return {};
+    });
+    const { getByLabelText } = render(<Amount {...mockProps} />);
+    const inputElement = getByLabelText("required_annual_income");
+
+    expect(inputElement.value).toBe("5,000");
+  });
+});
