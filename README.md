@@ -165,3 +165,11 @@ TypeError: Cannot read properties of undefined (reading 'updatedStageInputs')
       136 |         .updatedStageInputs.findIndex(
       137 |           (ref: any) => ref && ref.stageId === stageSelector[0].stageId
       138 |         );
+
+      jest.mock("../../../utils/common/change.utils", () => ({
+  getUrl: jest.fn(() => ({
+    getUpdatedStage: jest.fn(() => ({
+      updatedStageInputs: [],
+    })),
+  })),
+}));
