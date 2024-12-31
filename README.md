@@ -189,3 +189,176 @@ export const Date = (props: KeyWithAnyModel) => {
 
 export default Date;
 
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import { Date } from "./Date";
+import validateService from "../../../services/validation-service";
+import errorMsg from "../../../assets/_json/error.json";
+
+jest.mock("../../../services/validation-service", () => ({
+  isValidDate: jest.fn(),
+  calculateAge: jest.fn(),
+  validateAge: jest.fn(),
+  getValidationMsg: jest.fn(),
+  allowOnlyCharacter: jest.fn(),
+}));
+
+jest.mock("../../../utils/store/last-accessed-slice", () => ({
+  lastAction: {
+    getField: jest.fn(),
+  },
+}));
+
+const mockStore = configureStore([]);
+
+describe("Date Component", () => {
+  let store: any;
+  let mockProps: any;
+
+  beforeEach(() => {
+    store = mockStore({
+      stages: {
+        stages: [
+          {
+            stageInfo: {
+              applicants: {
+                sample_field_a_1: "1995-10-15",
+              },
+              products: [
+                {
+                  product_type: "type1",
+                  product_category: "category1",
+                },
+              ],
+            },
+          },
+        ],
+      },
+      fielderror: {
+        error: [],
+      },
+    });
+
+    mockProps = {
+      data: {
+        logical_field_name: "sample_field",
+        rwb_label_name: "Date of Birth",
+        mandatory: "Yes",
+        editable: false,
+      },
+      handleCallback: jest.fn(),
+    };
+  });
+
+  const renderComponent = () =>
+    render(
+      <Provider store={store}>
+        <Date {...mockProps} />
+      </Provider>
+    );
+
+  it("should render the component with initial values", () => {
+    renderComponent();
+    expect(screen.getByPlaceholderText("DD")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("MM")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("YYYY")).toBeInTheDocument();
+
+    expect(screen.getByPlaceholderText("DD")).toHaveValue("15");
+    expect(screen.getByPlaceholderText("MM")).toHaveValue("10");
+    expect(screen.getByPlaceholderText("YYYY")).toHaveValue("1995");
+  });
+
+  it("should call handleCallback when a field changes", () => {
+    renderComponent();
+    const dayInput = screen.getByPlaceholderText("DD");
+    fireEvent.change(dayInput, { target: { value: "16" } });
+
+    expect(mockProps.handleCallback).toHaveBeenCalledWith(
+      mockProps.data,
+      "1995-10-16"
+    );
+  });
+
+  it("should validate the date when all fields are filled", () => {
+    (validateService.isValidDate as jest.Mock).mockReturnValue(true);
+    (validateService.validateAge as jest.Mock).mockReturnValue(false);
+
+    renderComponent();
+
+    const yearInput = screen.getByPlaceholderText("YYYY");
+    fireEvent.change(yearInput, { target: { value: "2000" } });
+
+    expect(validateService.isValidDate).toHaveBeenCalledWith("2000-10-15");
+    expect(validateService.validateAge).toHaveBeenCalled();
+    expect(screen.queryByText(/Date of Birth/)).not.toBeInTheDocument();
+  });
+
+  it("should show an error if the date is invalid", () => {
+    (validateService.isValidDate as jest.Mock).mockReturnValue(false);
+
+    renderComponent();
+
+    const yearInput = screen.getByPlaceholderText("YYYY");
+    fireEvent.change(yearInput, { target: { value: "abcd" } });
+
+    expect(screen.getByText(`${errorMsg.patterns} Date of Birth`)).toBeInTheDocument();
+  });
+
+  it("should handle mandatory fields correctly", () => {
+    renderComponent();
+
+    const dayInput = screen.getByPlaceholderText("DD");
+    fireEvent.change(dayInput, { target: { value: "" } });
+
+    expect(screen.getByText(`${errorMsg.emity} Date of Birth`)).toBeInTheDocument();
+  });
+
+  it("should handle focus events", () => {
+    renderComponent();
+
+    const dayInput = screen.getByPlaceholderText("DD");
+    fireEvent.focus(dayInput);
+
+    expect(validateService.allowOnlyCharacter).toHaveBeenCalled();
+  });
+
+  it("should auto-bind a single digit to a two-digit format for DD/MM", () => {
+    renderComponent();
+
+    const dayInput = screen.getByPlaceholderText("DD");
+    fireEvent.blur(dayInput, { target: { value: "7" } });
+
+    expect(dayInput).toHaveValue("07");
+  });
+
+  it("should disable inputs if the field is not editable", () => {
+    renderComponent();
+
+    const dayInput = screen.getByPlaceholderText("DD");
+    expect(dayInput).toBeDisabled();
+  });
+
+  it("should set error based on fieldErrorSelector", () => {
+    store = mockStore({
+      stages: {
+        stages: [
+          {
+            stageInfo: {
+              applicants: {},
+              products: [],
+            },
+          },
+        ],
+      },
+      fielderror: {
+        error: [{ fieldName: "sample_field" }],
+      },
+    });
+
+    renderComponent();
+    expect(screen.getByText(`${errorMsg.patterns} Date of Birth`)).toBeInTheDocument();
+  });
+});
+
