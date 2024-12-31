@@ -371,4 +371,12 @@ TypeError: props.handleFieldDispatch is not a function
       16 |   };
       17 | };
       18 |
+ Actions must be plain objects. Use custom middleware for async actions.
 
+      122 |     event: React.FocusEvent<HTMLInputElement>
+      123 |   ) => {
+    > 124 |     dispatch(lastAction.getField(fieldName));
+          |     ^
+      125 |   };
+      126 |   return (
+      127 |     <>
