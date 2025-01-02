@@ -1431,3 +1431,15 @@ describe("Fields Component - Comprehensive Test Coverage", () => {
     expect(stageElement).toBeTruthy();
   });
 });
+
+ TypeError: Cannot read properties of undefined (reading 'data')
+
+      68 |  */
+      69 | export const FindIndex = (stageInfo: any, stageId: string) => {
+    > 70 |   return stageInfo.fieldMetaData.data.stages.findIndex(
+         |                                  ^
+      71 |     (id: StageFieldModel) => id.stageId.toLowerCase() === stageId.toLowerCase()
+      72 |   );
+      73 | };
+
+      at data (src/utils/common/change.utils.ts:70:34)
