@@ -1251,3 +1251,183 @@ describe("Fields Component - Initial Setup", () => {
     expect(fieldElement).toBeTruthy();
   });
 });
+
+
+import React from "react";
+import { render } from "@testing-library/react";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import Fields from "./fields";
+
+const mockStore = configureStore([]);
+
+describe("Fields Component - Comprehensive Test Coverage", () => {
+  let store: any;
+
+  beforeEach(() => {
+    store = mockStore({
+      stages: {
+        stages: [
+          {
+            stageId: "ad-1",
+            stageInfo: {
+              products: [{ product_type: "280", product_category: "CC" }],
+              applicants: {
+                residential_address_a_1: "123 Street, City",
+                max_eligible_amount: 5000,
+                full_name_a_1: "John Doe",
+                embossed_dc_name: "",
+                Cpfcontributions: [],
+              },
+              topupLookup: [{ id: 1, name: "TopUp1" }],
+            },
+          },
+        ],
+        userInput: {
+          applicants: {},
+        },
+        conditionalFields: { newFields: { field1: "value1" } },
+        dependencyFields: { workType: "employee" },
+        myinfoResponse: { someKey: "someValue" },
+        currentStage: "ad-1",
+        lastStageId: "ld-1",
+        journeyType: "ETC",
+        otpTrigger: { triggered: true },
+      },
+      valueUpdate: { value: true },
+      lov: { someLovKey: "someLovValue" },
+      tax: {
+        fields: ["tax_id_no_1", "crs_reason_code_1", "crs_comments_1"],
+      },
+      alias: {
+        fields: ["alias_field_1", "alias_field_2"],
+      },
+      referralcode: { code: "REF123" },
+      loanTopUp: {
+        existingLoanTopUp: true,
+        newLoanTopUp: false,
+      },
+      fielderror: {
+        mandatoryFields: ["field1", "field2"],
+      },
+      postalCode: {
+        showPopup: true,
+      },
+      bancaList: {
+        bancaDetails: { key1: "value1" },
+      },
+      error: { errorCode: "404", errorMessage: "Not Found" },
+      urlParam: {
+        resume: true,
+      },
+      tax: {
+        fields: ["tax_field_1", "tax_field_2"],
+      },
+    });
+  });
+
+  it("renders correctly and initializes with default state", () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Fields selectedLeftMenu="menu1" />
+      </Provider>
+    );
+
+    // Expect the initial state to set the correct stageId
+    expect(store.getActions()).toEqual([]);
+    expect(container).toBeTruthy();
+  });
+
+  it("handles conditional fields and user input correctly", () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Fields selectedLeftMenu="menu1" />
+      </Provider>
+    );
+
+    // Check if conditional fields are correctly processed
+    expect(store.getActions()).toContainEqual(
+      expect.objectContaining({
+        type: expect.stringContaining("deleteConditionalFieldSelector"),
+      })
+    );
+
+    // Check if user inputs are updated correctly
+    const userInputActions = store
+      .getActions()
+      .filter((action: any) =>
+        action.type.includes("assignUpdateUserInput")
+      );
+    expect(userInputActions.length).toBeGreaterThan(0);
+
+    // Validate elements rendered based on conditional fields
+    const conditionalFieldElement = container.querySelector(
+      ".conditional-field-class" // Replace with an actual element or class
+    );
+    expect(conditionalFieldElement).toBeTruthy();
+  });
+
+  it("handles loan top-up visibility and related logic", () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Fields selectedLeftMenu="menu1" />
+      </Provider>
+    );
+
+    // Check if the loan top-up modal is shown based on conditions
+    const loanTopUpActions = store
+      .getActions()
+      .filter((action: any) =>
+        action.type.includes("loanTopUpAction.setnewLoanTopUp")
+      );
+    expect(loanTopUpActions.length).toBe(1);
+
+    // Validate elements rendered for loan top-up
+    const loanTopUpElement = container.querySelector(
+      ".loan-topup-class" // Replace with an actual element or class
+    );
+    expect(loanTopUpElement).toBeTruthy();
+  });
+
+  it("processes and renders mandatory fields correctly", () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Fields selectedLeftMenu="menu1" />
+      </Provider>
+    );
+
+    // Check mandatory fields processing
+    const mandatoryFieldsActions = store
+      .getActions()
+      .filter((action: any) =>
+        action.type.includes("fieldErrorAction.setMandatoryFields")
+      );
+    expect(mandatoryFieldsActions.length).toBe(1);
+
+    // Validate elements for mandatory fields
+    const mandatoryFieldElement = container.querySelector(
+      ".mandatory-field-class" // Replace with an actual element or class
+    );
+    expect(mandatoryFieldElement).toBeTruthy();
+  });
+
+  it("handles stage transitions and data fetching correctly", () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Fields selectedLeftMenu="menu1" />
+      </Provider>
+    );
+
+    // Check if stageId is updated based on state
+    const stageActions = store
+      .getActions()
+      .filter((action: any) =>
+        action.type.includes("stagesAction.setStageId")
+      );
+    expect(stageActions.length).toBe(1);
+
+    // Validate elements for stage transitions
+    const stageElement = container.querySelector(".stage-class-name");
+    expect(stageElement).toBeTruthy();
+  });
+});
