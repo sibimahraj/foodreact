@@ -1443,3 +1443,19 @@ describe("Fields Component - Comprehensive Test Coverage", () => {
       73 | };
 
       at data (src/utils/common/change.utils.ts:70:34)
+
+
+       TypeError: Cannot read properties of undefined (reading 'reduce')
+
+      78 |     let fieldsetGroup: Array<FieldSetGroupModel[]> = [];
+      79 |     const groupObj = (response: StageFieldModel) => {
+    > 80 |       return response?.fields.reduce(
+         |                               ^
+      81 |         (prev: Array<FieldSetGroupModel>, { field_set_name, ...items }) => {
+      82 |           let id = prev.findIndex(
+      83 |             (item: KeyWithAnyModel) => item.field_set_name === field_set_name
+
+      at reduce (src/modules/dashboard/fields/fields.utils.ts:80:31)
+      at groupObj (src/modules/dashboard/fields/fields.utils.ts:102:28)
+          at Array.forEach (<anonymous>)
+      at forEach (src/modules/dashboard/fields/fields.utils.ts:98:23)
