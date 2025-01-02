@@ -1459,3 +1459,42 @@ describe("Fields Component - Comprehensive Test Coverage", () => {
       at groupObj (src/modules/dashboard/fields/fields.utils.ts:102:28)
           at Array.forEach (<anonymous>)
       at forEach (src/modules/dashboard/fields/fields.utils.ts:98:23)
+
+
+      describe("groupObj function", () => {
+  it("should group fields correctly when valid fields are provided", () => {
+    const response = {
+      fields: [
+        { field_set_name: "group1", fieldName: "field1" },
+        { field_set_name: "group1", fieldName: "field2" },
+        { field_set_name: "group2", fieldName: "field3" },
+      ],
+    };
+
+    const result = groupObj(response);
+
+    expect(result).toEqual([
+      {
+        field_set_name: "group1",
+        items: [{ fieldName: "field1" }, { fieldName: "field2" }],
+      },
+      {
+        field_set_name: "group2",
+        items: [{ fieldName: "field3" }],
+      },
+    ]);
+  });
+
+  it("should handle cases where fields are undefined", () => {
+    const response = {}; // Mock missing fields
+    expect(() => groupObj(response)).not.toThrow();
+    const result = groupObj(response);
+    expect(result).toEqual([]);
+  });
+
+  it("should return an empty array when fields are empty", () => {
+    const response = { fields: [] }; // Empty fields array
+    const result = groupObj(response);
+    expect(result).toEqual([]);
+  });
+});
