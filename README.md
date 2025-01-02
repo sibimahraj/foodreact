@@ -1175,3 +1175,79 @@ const Fields = (props: KeyWithAnyModel) => {
 };
 
 export default React.memo(Fields);
+
+
+import React from "react";
+import { render } from "@testing-library/react";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import Fields from "./fields";
+
+const mockStore = configureStore([]);
+
+describe("Fields Component - Initial Setup", () => {
+  let store: any;
+
+  beforeEach(() => {
+    store = mockStore({
+      stages: {
+        stages: [
+          {
+            stageId: "ad-1",
+            stageInfo: {
+              products: [{ product_type: "280" }],
+              applicants: {
+                residential_address_a_1: "123 Street, City",
+              },
+            },
+          },
+        ],
+        userInput: {
+          applicants: {},
+        },
+        conditionalFields: { newFields: {} },
+        myinfoMissingFields: {},
+        dependencyFields: { workType: null },
+        myinfoResponse: {},
+        currentStage: "ad-1",
+        lastStageId: "ld-1",
+        journeyType: "ETC",
+        otpTrigger: {},
+      },
+      valueUpdate: {},
+      lov: {},
+      tax: {
+        fields: [],
+      },
+      alias: {
+        fields: [],
+      },
+      referralcode: {},
+      loanTopUp: {
+        existingLoanTopUp: false,
+        newLoanTopUp: false,
+      },
+    });
+  });
+
+  it("renders correctly and matches initial state", () => {
+    const { getByText } = render(
+      <Provider store={store}>
+        <Fields selectedLeftMenu="menu1" />
+      </Provider>
+    );
+
+    expect(store.getActions()).toEqual([]);
+  });
+
+  it("fetches the correct stageId and fields", () => {
+    const { container } = render(
+      <Provider store={store}>
+        <Fields selectedLeftMenu="menu1" />
+      </Provider>
+    );
+
+    const fieldElement = container.querySelector(".fields-class-name"); // Replace with an actual class or element check
+    expect(fieldElement).toBeTruthy();
+  });
+});
