@@ -365,3 +365,153 @@ const ThankYou = () => {
 };
 
 export default ThankYou;
+
+
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import ThankYou from "./ThankYou";
+import { MemoryRouter } from "react-router-dom";
+
+// Mock services and utils
+jest.mock("../../../services/track-events", () => ({
+  triggerAdobeEvent: jest.fn(),
+}));
+jest.mock("../../../services/common-service", () => ({
+  redirectingToIbanking: jest.fn(),
+  activateDigitalCard: jest.fn(() =>
+    Promise.resolve({ status: "SUCCESS" })
+  ),
+}));
+jest.mock("../../../services/ga-track-events", () => ({
+  pageView: jest.fn(),
+}));
+jest.mock("../../../utils/common/change.utils", () => ({
+  getUrl: {
+    getChannelRefNo: jest.fn(() => ({ applicationRefNo: "12345" })),
+    getParameterByName: jest.fn(() => "authValue"),
+    getUpdatedStage: jest.fn(() => ({
+      ccplChannel: "MBNK",
+    })),
+  },
+}));
+
+describe("ThankYou Component", () => {
+  const mockStore = configureStore([]);
+  const initialStore = {
+    stages: {
+      stages: [
+        {
+          stageInfo: {
+            products: [
+              {
+                product_category: "CC",
+                name: "Credit Card",
+                product_sequence_number: "001",
+                product_type: "TYPE1",
+                acct_details: [
+                  {
+                    account_number: "ACC123",
+                    card_no: "CARD123",
+                  },
+                ],
+                offer_details: [
+                  {
+                    fees: [{ fee_amount: "100" }],
+                  },
+                ],
+              },
+            ],
+            applicants: {
+              embossed_name_a_1: "USER NAME",
+              loan_tenor_a_1: "24",
+              required_loan_amount_a_1: 50000,
+              auth_mode_a_1: "IX",
+            },
+          },
+        },
+      ],
+      journeyType: "NTB",
+      otpSuccess: false,
+      isDocumentUpload: false,
+    },
+  };
+
+  const renderComponent = (storeData = initialStore) => {
+    const store = mockStore(storeData);
+    return render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <ThankYou />
+        </MemoryRouter>
+      </Provider>
+    );
+  };
+
+  it("should render the ThankYou component without crashing", () => {
+    renderComponent();
+    expect(screen.getByTestId("form")).toBeInTheDocument();
+    expect(screen.getByTestId("app thankyou")).toBeInTheDocument();
+  });
+
+  it("should display the ThankYouCC component when productCategory is CC", () => {
+    renderComponent();
+    expect(screen.getByTestId("app thankyou")).toBeInTheDocument();
+    // Assuming ThankYouCC renders a specific element
+    expect(screen.getByText("Credit Card")).toBeInTheDocument();
+  });
+
+  it("should handle form submission and trigger redirection", () => {
+    renderComponent();
+    const formElement = screen.getByTestId("form");
+    fireEvent.submit(formElement);
+    expect(window.location.href).toContain(process.env.REACT_APP_HOME_PAGE_URL);
+  });
+
+  it("should trigger Adobe event and GA page view on mount", () => {
+    const { getByTestId } = renderComponent();
+    expect(getByTestId("app thankyou")).toBeInTheDocument();
+    // Ensure tracking events are triggered
+    expect(
+      require("../../../services/track-events").triggerAdobeEvent
+    ).toHaveBeenCalledWith("formSubmit");
+    expect(
+      require("../../../services/ga-track-events").pageView
+    ).toHaveBeenCalled();
+  });
+
+  it("should handle card activation flow and show success UI", async () => {
+    const modifiedStore = {
+      ...initialStore,
+      stages: { ...initialStore.stages, otpSuccess: true },
+    };
+    renderComponent(modifiedStore);
+
+    // Assuming success UI has specific text
+    expect(await screen.findByText("Card Activation Success")).toBeInTheDocument();
+  });
+
+  it("should render the ThankYouUpload component for upload flow", () => {
+    const modifiedStore = {
+      ...initialStore,
+      stages: { ...initialStore.stages, isDocumentUpload: true },
+    };
+    renderComponent(modifiedStore);
+    expect(screen.getByText("Upload Documents")).toBeInTheDocument(); // Assuming ThankYouUpload renders specific text
+  });
+
+  it("should show error UI on failed card activation", async () => {
+    jest.mock("../../../services/common-service", () => ({
+      activateDigitalCard: jest.fn(() =>
+        Promise.resolve({ status: "FAILURE" })
+      ),
+    }));
+    const modifiedStore = {
+      ...initialStore,
+      stages: { ...initialStore.stages, otpSuccess: true },
+    };
+    renderComponent(modifiedStore);
+    expect(await screen.findByText("Activation Failed")).toBeInTheDocument(); // Assuming error UI renders specific text
+  });
+});
