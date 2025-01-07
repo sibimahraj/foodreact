@@ -202,4 +202,34 @@ describe("ThankYou Component", () => {
       168 |       <Provider store={store}>
       169 |          <ThankYou />
       170 |         </Provider>
+
+
+      jest.mock("../../../services/tracking-service", () => ({
+  gaTrackEvents: {
+    pageView: jest.fn(),
+  },
+  trackEvents: {
+    triggerAdobeEvent: jest.fn(),
+  },
+}));
+const mockStoreData = {
+  stages: {
+    stages: [
+      {
+        stageInfo: {
+          products: [
+            {
+              product_category: "PL",
+              name: "Personal Loan",
+              acct_details: [{ account_number: "ACC12345", card_no: "CARD12345" }],
+            },
+          ],
+        },
+      },
+    ],
+  },
+};
+
+
+
  
