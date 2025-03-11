@@ -145,3 +145,22 @@ const tax = createSlice({
 });
 export const taxAction = tax.actions;
 export default tax;
+
+restoreTaxField: (state) => {
+  if (state.hasInteracted && state.taxIdNo.length < 1) {
+    const restoredFields = [...state.fields];
+
+    state.removedFields.forEach((removedField) => {
+      const index = restoredFields.findIndex((field) =>
+        field.startsWith(`tax_id_no_${removedField.split("_")[3]}`)
+      );
+
+      if (index !== -1) {
+        restoredFields.splice(index + 1, 0, removedField); // Insert right after its tax_id_no
+      }
+    });
+
+    state.fields = restoredFields;
+    state.removedFields = [];
+  }
+}
