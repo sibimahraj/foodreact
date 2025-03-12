@@ -164,3 +164,7 @@ restoreTaxField: (state) => {
     state.removedFields = [];
   }
 }
+className={`${taxIdNo.length > 1 ? props.data.logical_field_name : "dropdown-select"} 
+            ${someCondition ? "class-one" : ""} 
+            ${anotherCondition ? "class-two" : ""} 
+            ${yetAnotherCondition ? "class-three" : ""}`}
