@@ -186,3 +186,28 @@ className={`${taxIdNo.length > 1 ? props.data.logical_field_name : "dropdown-sel
       setShowCrsReason(true);
     }
   },[userInputSelector.applicants.tax_id_no_1_a_1]);
+useEffect(() => {
+  debugger;
+
+  // Extract all tax_id_no_ fields
+  const taxIdEntries = Object.entries(userInputSelector.applicants)
+    .filter(([key]) => key.startsWith('tax_id_no_'));
+
+  // Convert to object
+  const taxId = Object.fromEntries(taxIdEntries);
+
+  // If no tax fields have a value, ensure crs_reason_code is shown
+  if (taxIdEntries.length === 0 || Object.values(taxId).every(value => !value)) {
+    setShowCrsReason(true);
+    return;
+  }
+
+  // Loop through tax fields to decide visibility
+  Object.keys(taxId).forEach((key: any) => {
+    const taxIdNoIndex = key.split("_")[3];
+    if (props.data.logical_field_name === `crs_reason_code_${taxIdNoIndex}`) {
+      setShowCrsReason(false);
+    }
+  });
+
+}, [userInputSelector.applicants]);
