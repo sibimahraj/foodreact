@@ -168,3 +168,21 @@ className={`${taxIdNo.length > 1 ? props.data.logical_field_name : "dropdown-sel
             ${someCondition ? "class-one" : ""} 
             ${anotherCondition ? "class-two" : ""} 
             ${yetAnotherCondition ? "class-three" : ""}`}
+
+            useEffect(()=>{
+    debugger
+    if (!userInputSelector.applicants.tax_id_no_1_a_1) return;
+    if (Object.fromEntries(Object.entries(userInputSelector.applicants).filter(([key]) => key.startsWith('tax_id_no_')))) {
+      const taxId = Object.fromEntries(Object.entries(userInputSelector.applicants).filter(([key]) => key.startsWith('tax_id_no_')));
+      Object.keys(taxId).forEach((key: any) => {
+        const taxIdNoIndex = key.split("_")[3];
+        if (props.data.logical_field_name === `crs_reason_code_${taxIdNoIndex}`) {
+          setShowCrsReason(false);
+        } else {
+          setShowCrsReason(true);
+        }
+      });
+    } else {
+      setShowCrsReason(true);
+    }
+  },[userInputSelector.applicants.tax_id_no_1_a_1]);
