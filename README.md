@@ -211,3 +211,34 @@ useEffect(() => {
   });
 
 }, [userInputSelector.applicants]);
+
+const [showCrsReason, setShowCrsReason] = useState<Record<string, boolean>>({});
+useEffect(() => {
+  debugger;
+
+  // Extract all tax_id_no_ fields dynamically
+  const taxIdEntries = Object.entries(userInputSelector.applicants)
+    .filter(([key]) => key.startsWith('tax_id_no_'));
+
+  const taxId = Object.fromEntries(taxIdEntries);
+
+  // New object to store field-specific visibility
+  const updatedCrsReasonState: Record<string, boolean> = {};
+
+  // If all tax fields are empty, show all crs_reason_code_X fields
+  if (taxIdEntries.length === 0 || Object.values(taxId).every(value => !value)) {
+    setShowCrsReason({});
+    return;
+  }
+
+  // Loop through tax fields to update only specific crs_reason_code_X
+  Object.keys(taxId).forEach((key) => {
+    const taxIdNoIndex = key.split("_")[3]; // Extract index from key
+
+    updatedCrsReasonState[`crs_reason_code_${taxIdNoIndex}`] = false; // Hide the specific field
+  });
+
+  // Update state dynamically
+  setShowCrsReason(updatedCrsReasonState);
+
+}, [userInputSelector.applicants]);
